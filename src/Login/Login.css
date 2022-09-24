@@ -1,0 +1,77 @@
+.login-wrapper{
+    align-items: center;
+    color: #150089;
+    text-align: center;
+    border: 2px solid black;
+    margin-right: 509px;
+    margin-left: 491px;
+    padding-bottom: 20px;
+    background-color: rgba(231, 179, 35, 0.5);
+    border-radius: 10px;
+    box-shadow: 2px 2px 15px rgba(0, 0, 0, 0.3);
+    margin-top: 175px;
+}
+
+.card{
+    background-color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.btn-login{
+    border:2px solid black;
+    color: white;
+    background-color: rgb(200, 163, 1);
+    margin-top: 20px;
+    margin-left: 0;
+    font-family: serif;
+    border-radius: 3px;
+}
+
+.image{
+    background-image: url(./bg.jpg);
+    background-repeat: no-repeat;
+
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background: rgb(219, 226, 226);
+}
+
+.row{
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 12px 12px 22px grey;
+}
+
+.btn1{
+    border: none;
+    outline: none;
+    height: 50px;
+    width: 100%;
+    background-color: black;
+    color: white;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.btn1:hover{
+    background-color: white;
+    border: 1px solid;
+    color: black;
+}
+
+.orheading{
+    margin: 1rem;
+}
+
+.form{
+    text-align: center;
+    align-items: center;
+}
