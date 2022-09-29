@@ -19,23 +19,24 @@ function App() {
     <div className="wrapper">
       {/* <Header title='To-DoList'/> */}
       {/* <h2>Application</h2> */}
-      {/* <BrowserRouter>
+      <BrowserRouter>
         <div className="links">
-          <ul>
+          {/* <ul>
             <li>
               <Link to="/dashboard">Dashboard</Link>
             </li>
             <li>
               <Link to="/preferences">Preferences</Link>
             </li>
-          </ul>
+          </ul> */}
+          <Dashboard/>
         </div>
         <Routes>
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/preferences" element={<Preferences />}></Route>
         </Routes>
-      </BrowserRouter> */}
-      <Dashboard/>
+      </BrowserRouter>
+      {/* <Dashboard/> */}
     </div>
   );
 }
