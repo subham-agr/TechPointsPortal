@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from "react";
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -21,6 +22,11 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 // import Chart from './Chart';
 // import Deposits from './Deposits';
 // import Orders from './Orders';
+import { useNavigate } from 'react-router-dom';
+import {useSearchParams} from 'react-router-dom';  
+import axios from "axios";
+import { useLocation } from 'react-router-dom';
+
 
 function Copyright(props) {
   return (
@@ -205,7 +211,88 @@ function DashboardContent() {
     </ThemeProvider>
   );
 }
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  let query = useQuery();
+  if(localStorage.getItem('code')===null){
+    localStorage.setItem('code',query.get('code'))
+  }
+  // console.log(data)
+  const [isLoading, setLoading] = useState(true);
+  const [pokemon, setPokemon] = useState();
+    if(localStorage.getItem('data')===null){
+      if(query.get('code')===null){
+        window.location.replace('http://localhost:3000');
+      }
+      const data = {
+        code:query.get('code'),
+      };
+    axios
+    .post('http://127.0.0.1:8000/userdata', data, {headers: {"Content-Type": "application/json"}})
+    .then((res) => {
+      localStorage.setItem('data',JSON.stringify(res))
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 500);
+      console.log(JSON.parse(localStorage.getItem('data')).data.name);
+      console.log('a')
+      // setPokemon(res.data);
+      // setLoading(false);
+    }
+  
+    )
+    .catch(err => {
+      console.error(err);
+      // setLoading(false);
+  
+    }).finally( ()=>{
+      console.log("hiii");
+      if(localStorage.getItem('data')===null){
+        // alert("LOGIN PLEASE")
+        // window.location.replace('http://localhost:3000');
+      }
+    });
+  }
+  // else{
+  //   console.log('b')
+  // }
+  // }, []);
+
+
+// if (isLoading) {
+//   return <div className="App">Loading...</div>;
+// }
+
+  // if(localStorage.getItem('data')===null && codeid===null){
+  //   // alert("LOGIN PLEASE")
+  //   window.location.replace('http://localhost:3000');
+  // }
+//   useEffect(() => {
+//     console.log('l')
+//   });
+//   const [searchParams, setSearchParams] = useSearchParams();
+//   searchParams.get('code');
+//   const navigate = useNavigate();
+//   if(searchParams.get('code')!==undefined){
+//     localStorage.setItem('code',searchParams.get('code'));
+//   }
+//   if (localStorage.getItem('data')===null){
+//     if(searchParams.get('code')===undefined){
+//       navigate("/preferences");
+// } 
+//   const data = {
+//     code: searchParams.get('code')
+//   };
+//   await userData(data);
+//   }
+//   console.log(localStorage.getItem('data'));
+//   console.log(localStorage.getItem('name'));
+//   console.log(localStorage.getItem('picture'));
+//   console.log(searchParams.get('code'));
+//     searchParams.delete('code');  
+//     console.log(searchParams.get('code'))
   return <DashboardContent />;
 }

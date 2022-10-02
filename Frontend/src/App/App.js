@@ -11,9 +11,6 @@ import useToken from './useToken'
 function App() {
   const { token, setToken } = useToken();
 
-  if (!token) {
-    return <Login setToken={setToken} />
-  }
 
   return (
     <div className="wrapper">
@@ -29,11 +26,12 @@ function App() {
               <Link to="/preferences">Preferences</Link>
             </li>
           </ul> */}
-          <Dashboard/>
+          {/* <Dashboard/> */}
         </div>
         <Routes>
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/preferences" element={<Preferences />}></Route>
+          <Route path="/" element={<Login />}></Route>
         </Routes>
       </BrowserRouter>
       {/* <Dashboard/> */}
