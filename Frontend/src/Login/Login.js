@@ -1,5 +1,5 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
+// import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'bootstrap/dist/js/bootstrap.bundle.min';
 import React, { useState } from 'react'
 
 import './Login.css';
@@ -9,15 +9,14 @@ export default function Login() {
     if (localStorage.getItem("data") === null) {
         
         return (
-            <section className='form my-4 mx-5'>
-                <div className="container">
-                    <div className="row no-gutters">
-                        <div className="image col-lg-5">
-                            {/* <img src="bg.jpg" alt="Random Picture" /> */}
+            <div className='container'>
+                <div className="card">
+                    <div className="row">
+                        <div className="images">
+                            {/* <img src="logo.jpg" alt="Random Picture" /> */}
                         </div>
                     </div>
-                    <div className="card col-lg-7 px-5 pt-5">
-                        <h1 className='font-weight-bold py-3'>Logo</h1>
+                    <div>
                         <h4>Sign in to your account</h4>
                         <form className="form">
                             <div className="form-row">
@@ -30,7 +29,7 @@ export default function Login() {
                         </form>
                     </div>
                 </div>
-            </section>
+            </div>
         );
           } else {
             window.location.replace("http://localhost:3000/dashboard");
