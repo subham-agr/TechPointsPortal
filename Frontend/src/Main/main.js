@@ -28,11 +28,18 @@ import Tooltip from '@mui/material/Tooltip';
 import avatar from '../static/images/avatar/1.jpeg'
 import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import RedeemIcon from '@mui/icons-material/Redeem';
+import HistoryIcon from '@mui/icons-material/History';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {useSearchParams} from 'react-router-dom';  
 import axios from "axios";
 import { useLocation } from 'react-router-dom';
+import Dashboard from '../Components/Dashboard/dashboard';
+import Notification from '../Components/Notifications/notifications';
+import Prize from '../Components/Prizes/prizes';
+import Orders from '../Components/Orders/orders';
+import History from '../Components/History/history';
+import './main.css'
 
 const drawerWidth = 240;
 
@@ -105,10 +112,15 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-export default function Dashboard() {
+export default function Main() {
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [isdashboard, setdashboard] = React.useState(false);
+  const [isnotif, setnotif] = React.useState(false);
+  const [isorder, setorder] = React.useState(false);
+  const [isprize, setprize] = React.useState(false);
+  const [ishistory, sethistory] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -163,6 +175,33 @@ export default function Dashboard() {
     // }
   // }, []);
 
+  function handleclick(e){
+    if(e){
+      setdashboard(false);
+      setnotif(false);
+      setorder(false);
+      setprize(false);
+      sethistory(false);
+    }
+    if(e.target.id === '1'){
+      setdashboard(true);
+    }
+    else if(e.target.id === '2'){
+      setnotif(true);
+    }
+    else if(e.target.id === '3'){
+      setprize(true);
+    }
+    else if(e.target.id === '4'){
+      setorder(true);
+    }
+    else if(e.target.id === '5'){
+      sethistory(true);
+    }
+    else if(e.target.id === '6'){
+      localStorage.clear()
+    }
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -181,15 +220,24 @@ export default function Dashboard() {
           >
             <MenuIcon />
           </IconButton>
+          <div className="flex-between">
+          <div className="title">
           <Typography variant="h6" noWrap component="div">
             Tech Points Portal
           </Typography>
+          </div>
           {/* <Tooltip title="Open settings"> */}
+          <div className="avatar-icon flex">
+          <Typography variant="h6" className='mx-2 none'>
+            Roll Number
+          </Typography>
           <Box sx = {{ flexGrow: 1}}>
               <IconButton sx={{ p: 0 }}>
                 <Avatar alt="Remy Sharp" src={JSON.parse(localStorage.getItem('data')).data.picture} />
               </IconButton>
           </Box>
+          </div>
+          </div>
             {/* </Tooltip> */}
         </Toolbar>
       </AppBar>
@@ -224,7 +272,7 @@ export default function Dashboard() {
             </ListItem>
           ))} */}
           <ListItem key="1" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton sx={{
+            <ListItemButton id='1' onClick={(e) => handleclick(e)} sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -242,7 +290,7 @@ export default function Dashboard() {
             </ListItemButton>
           </ListItem>
           <ListItem key="2" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton sx={{
+            <ListItemButton id='2' onClick={(e) => handleclick(e)} sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -259,8 +307,8 @@ export default function Dashboard() {
               <ListItemText primary="Notification" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="5" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton sx={{
+          <ListItem key="3" disablePadding sx={{ display: 'block' }}>
+            <ListItemButton id='3' onClick={(e) => handleclick(e)} sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -278,7 +326,7 @@ export default function Dashboard() {
             </ListItemButton>
           </ListItem>
           <ListItem key="4" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton sx={{
+            <ListItemButton id='4' onClick={(e) => handleclick(e)} sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -295,8 +343,26 @@ export default function Dashboard() {
               <ListItemText primary="Orders" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="3" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton sx={{
+          <ListItem key="5" disablePadding sx={{ display: 'block' }}>
+            <ListItemButton id='5' onClick={(e) => handleclick(e)} sx={{
+              minHeight: 48,
+              justifyContent: open ? 'initial' : 'center',
+              px: 2.5,
+            }}>
+              <ListItemIcon
+              sx={{
+                minWidth: 0,
+                mr: open ? 3 : 'auto',
+                justifyContent: 'center'
+              }}
+              >
+                <HistoryIcon />
+              </ListItemIcon>
+              <ListItemText primary="History" sx={{opacity: open ? 1 : 0}} />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key="6" disablePadding sx={{ display: 'block' }}>
+            <ListItemButton id='6' onClick={(e) => handleclick(e)} sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -340,44 +406,13 @@ export default function Dashboard() {
           ))}
         </List> */}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box className='main' component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        <Typography paragraph>
-          Welcome {JSON.parse(localStorage.getItem('data')).data.name}!
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-          eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-          neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-          tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-          sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-          tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-          gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-          et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-          tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-          eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-          posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
-        <Typography>
-          Current Points
-          Total Earned 
-          Total Redemmed
-        </Typography>
-        <Typography>
-          Transaction History
-          Details Earned: sr no. Event/Competetion Standing Points-Earned Total
-          Redeemed Details: Sr No. Item type Price Date/Time Status Total
-        </Typography>
-        <Typography>
-          Prize catalogue: Photo Item-Name Description Points Redeem Button
-        </Typography>
-        <Typography>
-          Status Page 
-          Ordered Received Accepted
-        </Typography>
-        <Typography>
-          Reedem Now Page: List of Items, Filters, Submit Request Alert
-        </Typography>
+        {isdashboard?(<Dashboard />):(<></>)}
+        {isprize?(<Prize />):(<></>)}
+        {isnotif?(<Notification />):(<></>)}
+        {isorder?(<Orders />):(<></>)}
+        {ishistory?(<History />):(<></>)}
       </Box>
     </Box>
   );
