@@ -1,0 +1,27 @@
+/* .content{
+    background: linear-gradient(90deg, rgba(131,234,9,1) 0%, rgba(23,204,250,1) 100%);
+    color: white;
+} */
+
+.points{
+    width: 100%;
+    /* margin: 0.5rem; */
+    margin-bottom: 1rem;
+    padding: 2rem;
+    color: white;
+    background: linear-gradient(90deg, rgba(234,155,9,1) 0%, rgba(250,23,23,1) 100%);
+    border-radius: 1rem;
+    box-shadow: 4px 3px 14px 0px rgba(0,0,0,0.75);
+}
+
+.flex-between{
+    display: flex;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 450px) {
+    .points{
+        font-size: 2px;
+        /* font-style: italic; */
+    }
+}

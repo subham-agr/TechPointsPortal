@@ -1,0 +1,24 @@
+.flex-between{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* .main{
+    background: linear-gradient(90deg, rgba(131,234,9,1) 0%, rgba(23,204,250,1) 100%);
+    color: white;
+} */
+
+.drawer{
+    width: 35px;
+}
+
+.flex{
+    display: flex;
+}
+
+@media screen and (max-width: 450px) {
+    .none{
+        display: none;
+    }
+}
