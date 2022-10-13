@@ -88,12 +88,61 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 const mdTheme = createTheme();
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+export default function Dashboard() {
 
-function DashboardContent() {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+    let query = useQuery();
+  if(localStorage.getItem('code')===null){
+    localStorage.setItem('code',query.get('code'))
+  }
+  // console.log(data)
+  const [isLoading, setLoading] = useState(true);
+  const [pokemon, setPokemon] = useState();
+    if(localStorage.getItem('data')===null){
+      if(query.get('code')===null){
+        window.location.replace('http://localhost:3000');
+      }
+      const data = {
+        code:query.get('code'),
+      };
+    axios
+    .post('http://127.0.0.1:8000/userdata', data, {headers: {"Content-Type": "application/json"}})
+    .then((res) => {
+      localStorage.setItem('data',JSON.stringify(res))
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 500);
+      console.log(JSON.parse(localStorage.getItem('data')).data.name);
+      console.log('a')
+      // setPokemon(res.data);
+      // setLoading(false);
+    }
+  
+    )
+    .catch(err => {
+      console.error(err);
+      // setLoading(false);
+  
+    }).finally( ()=>{
+      console.log("hiii");
+      if(localStorage.getItem('data')===null){
+        alert("LOGIN PLEASE")
+        // window.location.replace('http://localhost:3000');
+      }
+    });
+  }
+  // else{
+    console.log(JSON.parse(localStorage.getItem('data')).data.name);
+    // }
+  // }, []);
+
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -147,152 +196,96 @@ function DashboardContent() {
             </IconButton>
           </Toolbar>
           <Divider />
-          {/* <List component="nav">
-            {mainListItems}
-            <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
-          </List> */}
+
           <List>
             Orders,Charts
           </List>
         </Drawer>
-        {/* <Box
-          component="main"
-          sx={{
-            backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
-            flexGrow: 1,
-            height: '100vh',
-            overflow: 'auto',
-          }}
-        >
-          <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              Chart
-              <Grid item xs={12} md={8} lg={9}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Chart />
-                </Paper>
-              </Grid>
-              Recent Deposits
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Deposits />
-                </Paper>
-              </Grid>
-              Recent Orders
-              <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
-                </Paper>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
-        </Box> */}
+        
       </Box>
     </ThemeProvider>
   );
 }
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
 
-export default async function Dashboard() {
-  let query = useQuery();
-  if(localStorage.getItem('code')===null){
-    localStorage.setItem('code',query.get('code'))
-  }
-  // console.log(data)
-  const [isLoading, setLoading] = useState(true);
-  const [pokemon, setPokemon] = useState();
-    if(localStorage.getItem('data')===null){
-      if(query.get('code')===null){
-        window.location.replace('http://localhost:3000');
-      }
-      const data = {
-        code:query.get('code'),
-      };
-    axios
-    .post('http://127.0.0.1:8000/userdata', data, {headers: {"Content-Type": "application/json"}})
-    .then((res) => {
-      localStorage.setItem('data',JSON.stringify(res))
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 500);
-      console.log(JSON.parse(localStorage.getItem('data')).data.name);
-      console.log('a')
-      // setPokemon(res.data);
-      // setLoading(false);
-    }
+
+// export default async function Dashboard() {
+//   let query = useQuery();
+//   if(localStorage.getItem('code')===null){
+//     localStorage.setItem('code',query.get('code'))
+//   }
+//   // console.log(data)
+//   const [isLoading, setLoading] = useState(true);
+//   const [pokemon, setPokemon] = useState();
+//     if(localStorage.getItem('data')===null){
+//       if(query.get('code')===null){
+//         window.location.replace('http://localhost:3000');
+//       }
+//       const data = {
+//         code:query.get('code'),
+//       };
+//     axios
+//     .post('http://127.0.0.1:8000/userdata', data, {headers: {"Content-Type": "application/json"}})
+//     .then((res) => {
+//       localStorage.setItem('data',JSON.stringify(res))
+//       // setTimeout(() => {
+//       //   window.location.reload();
+//       // }, 500);
+//       console.log(JSON.parse(localStorage.getItem('data')).data.name);
+//       console.log('a')
+//       // setPokemon(res.data);
+//       // setLoading(false);
+//     }
   
-    )
-    .catch(err => {
-      console.error(err);
-      // setLoading(false);
+//     )
+//     .catch(err => {
+//       console.error(err);
+//       // setLoading(false);
   
-    }).finally( ()=>{
-      console.log("hiii");
-      if(localStorage.getItem('data')===null){
-        // alert("LOGIN PLEASE")
-        // window.location.replace('http://localhost:3000');
-      }
-    });
-  }
-  // else{
-  //   console.log('b')
-  // }
-  // }, []);
+//     }).finally( ()=>{
+//       console.log("hiii");
+//       if(localStorage.getItem('data')===null){
+//         // alert("LOGIN PLEASE")
+//         // window.location.replace('http://localhost:3000');
+//       }
+//     });
+//   }
+//   // else{
+//   //   console.log('b')
+//   // }
+//   // }, []);
 
 
-// if (isLoading) {
-//   return <div className="App">Loading...</div>;
+// // if (isLoading) {
+// //   return <div className="App">Loading...</div>;
+// // }
+
+//   // if(localStorage.getItem('data')===null && codeid===null){
+//   //   // alert("LOGIN PLEASE")
+//   //   window.location.replace('http://localhost:3000');
+//   // }
+// //   useEffect(() => {
+// //     console.log('l')
+// //   });
+// //   const [searchParams, setSearchParams] = useSearchParams();
+// //   searchParams.get('code');
+// //   const navigate = useNavigate();
+// //   if(searchParams.get('code')!==undefined){
+// //     localStorage.setItem('code',searchParams.get('code'));
+// //   }
+// //   if (localStorage.getItem('data')===null){
+// //     if(searchParams.get('code')===undefined){
+// //       navigate("/preferences");
+// // } 
+// //   const data = {
+// //     code: searchParams.get('code')
+// //   };
+// //   await userData(data);
+// //   }
+// //   console.log(localStorage.getItem('data'));
+// //   console.log(localStorage.getItem('name'));
+// //   console.log(localStorage.getItem('picture'));
+// //   console.log(searchParams.get('code'));
+// //     searchParams.delete('code');  
+// //     console.log(searchParams.get('code'))
+//   return <DashboardContent/>;
 // }
-
-  // if(localStorage.getItem('data')===null && codeid===null){
-  //   // alert("LOGIN PLEASE")
-  //   window.location.replace('http://localhost:3000');
-  // }
-//   useEffect(() => {
-//     console.log('l')
-//   });
-//   const [searchParams, setSearchParams] = useSearchParams();
-//   searchParams.get('code');
-//   const navigate = useNavigate();
-//   if(searchParams.get('code')!==undefined){
-//     localStorage.setItem('code',searchParams.get('code'));
-//   }
-//   if (localStorage.getItem('data')===null){
-//     if(searchParams.get('code')===undefined){
-//       navigate("/preferences");
-// } 
-//   const data = {
-//     code: searchParams.get('code')
-//   };
-//   await userData(data);
-//   }
-//   console.log(localStorage.getItem('data'));
-//   console.log(localStorage.getItem('name'));
-//   console.log(localStorage.getItem('picture'));
-//   console.log(searchParams.get('code'));
-//     searchParams.delete('code');  
-//     console.log(searchParams.get('code'))
-  return <DashboardContent />;
-}
