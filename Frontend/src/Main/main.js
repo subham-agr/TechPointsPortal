@@ -116,7 +116,7 @@ export default function Main() {
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [isdashboard, setdashboard] = React.useState(false);
+  const [isdashboard, setdashboard] = React.useState(true);
   const [isnotif, setnotif] = React.useState(false);
   const [isorder, setorder] = React.useState(false);
   const [isprize, setprize] = React.useState(false);
@@ -199,7 +199,8 @@ export default function Main() {
       sethistory(true);
     }
     else if(e.target.id === '6'){
-      localStorage.clear()
+      localStorage.clear();
+      window.location.replace("http://localhost:3000/");
     }
   }
 

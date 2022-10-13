@@ -1,9 +1,12 @@
 import React from 'react'
 import Avatar from '../../static/images/avatar/1.jpeg'
-// import './catalouge.css'
+import './prizes.css'
 
 export default function Prize() {
   return (
+    <>
+    <h1>Search Bar here</h1>
+    <hr />
     <div className='Card'>
       <div className="image-card">
         <img src={Avatar} className="image" alt="Image of Product" />
@@ -28,5 +31,6 @@ export default function Prize() {
         </div>
       </div>
     </div>
+    </>
   )
 }

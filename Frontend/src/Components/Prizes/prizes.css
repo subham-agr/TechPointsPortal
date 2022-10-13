@@ -1,0 +1,47 @@
+.Card{
+    width: 25vw;
+    height: auto;
+    box-shadow: inset;
+    border-radius: 20px;
+    border: 2px solid black;
+    padding: 20px; 
+    background-color: lightblue;
+}
+
+/* .image-card{
+    text-align: center;
+} */
+
+.image{
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
+.item-description{
+    font-size: small;
+    color: rgb(60, 14, 14);
+}
+
+.details{
+    margin-bottom: 1rem;
+    padding: 2rem;
+}
+
+.price{
+    font-weight: bolder;
+}
+
+.reedem{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.reedem-btn{
+    padding: 20px 0px;
+}
+
+.cart-btn{
+    padding: 20px 0px;
+}
