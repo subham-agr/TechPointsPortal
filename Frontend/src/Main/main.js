@@ -171,7 +171,7 @@ export default function Main() {
     });
   }
   // else{
-    console.log(JSON.parse(localStorage.getItem('data')).data.name);
+    console.log(JSON.parse(localStorage.getItem('data')).data.roll_number);
     // }
   // }, []);
 
@@ -230,7 +230,7 @@ export default function Main() {
           {/* <Tooltip title="Open settings"> */}
           <div className="avatar-icon flex">
           <Typography variant="h6" className='mx-2 none'>
-            Roll Number
+          {JSON.parse(localStorage.getItem('data')).data.roll_number}
           </Typography>
           <Box sx = {{ flexGrow: 1}}>
               <IconButton sx={{ p: 0 }}>

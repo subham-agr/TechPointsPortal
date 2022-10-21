@@ -21,7 +21,7 @@ export default function Login() {
                         <form className="form">
                             <div className="form-row">
                                 <div className="col-lg-7">
-                                    <a href="https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=Qkpy3jC17jwlqOVBISsAub5fOEyRWr9yi48VcgeK&response_type=code&scope=profile picture&redirect_uri=http://localhost:3000/dashboard">
+                                    <a href="https://gymkhana.iitb.ac.in/profiles/oauth/authorize/?client_id=Qkpy3jC17jwlqOVBISsAub5fOEyRWr9yi48VcgeK&response_type=code&scope=profile picture ldap program&redirect_uri=http://localhost:3000/dashboard">
                                         <button type="button" className="btn1">Login with SSO</button>
                                     </a>
                                 </div>
