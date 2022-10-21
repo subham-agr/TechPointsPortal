@@ -223,13 +223,13 @@ export default function Main() {
           </IconButton>
           <div className="flex-between">
           <div className="title">
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" className='mx-2 none justify-content'>
             Tech Points Portal
           </Typography>
           </div>
           {/* <Tooltip title="Open settings"> */}
           <div className="avatar-icon flex">
-          <Typography variant="h6" className='mx-2 none'>
+          <Typography variant="h6" className='mx-2 none justify-content margin'>
           {JSON.parse(localStorage.getItem('data')).data.roll_number}
           </Typography>
           <Box sx = {{ flexGrow: 1}}>

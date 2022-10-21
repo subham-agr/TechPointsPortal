@@ -1,4 +1,4 @@
-.Card{
+/* .Card{
     width: 25vw;
     height: auto;
     box-shadow: inset;
@@ -6,42 +6,52 @@
     border: 2px solid black;
     padding: 20px; 
     background-color: lightblue;
-}
+} */
 
 /* .image-card{
     text-align: center;
 } */
 
-.image{
+/* .image{
     border-radius: 50%;
     width: 100px;
     height: 100px;
-}
+} */
 
-.item-description{
+/* .item-description{
     font-size: small;
     color: rgb(60, 14, 14);
-}
+} */
 
-.details{
+/* .details{
     margin-bottom: 1rem;
     padding: 2rem;
-}
+} */
 
-.price{
+/* .price{
     font-weight: bolder;
-}
+} */
 
-.reedem{
+/* .reedem{
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-}
+} */
 
-.reedem-btn{
+/* .reedem-btn{
     padding: 20px 0px;
-}
+} */
 
-.cart-btn{
+/* .cart-btn{
     padding: 20px 0px;
+} */
+
+.pagination{
+    /* width: 100%; */
+    display: flex;
+    margin: 1rem;
+    position: relative;
+    bottom: 0;
+    align-items: center;
+    text-align: center;
 }

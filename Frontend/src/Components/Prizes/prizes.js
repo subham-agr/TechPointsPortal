@@ -8,12 +8,24 @@ import Typography from '@mui/material/Typography';
 import Avatar from '../../static/images/avatar/1.jpeg';
 import product_card from './productdata'
 import Grid from '@mui/material/Grid';
+import Pagination from '@mui/material/Pagination';
+import './prizes.css'
 // import Grid from '@mui/material/Unstable_Grid2';
 
 export default function Prize() {
 
-  const products = product_card.map((item) =>
-  <Grid item xl={2} lg={3} xs={12} sm={6} md={4}>
+  const [page,setpage] = React.useState();
+  // var page1 = 12*page;
+  // function importAll(r) {
+  //   let images = {};
+  //   r.keys().map(item => { images[item.replace('./', '')] = r(item); });
+  //   return images;
+  // }
+
+  // const images = importAll(require.context('../../static/images/logo', false, '/\.jpg/'));
+
+  const products = product_card.slice(page-12,page).map((item) =>
+  <Grid item xl={2} xs={12} sm={6} md={4}>
   <Card sx={{ maxWidth: 345 }} key={item.id}>
   <CardMedia
     component="img"
@@ -40,11 +52,18 @@ export default function Prize() {
   </Grid>
   );
 
+  const handleChange = (e, p) => {
+    setpage(12*p)
+  }
+
   return (
     <div className="products">
       <Grid container spacing={2}>
           {products}
       </Grid>
+      <div className="pagination">
+        <Pagination count={2} color="primary" onChange={handleChange} />
+      </div>
     </div>
   );
 }
