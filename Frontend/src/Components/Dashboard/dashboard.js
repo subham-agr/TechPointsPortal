@@ -1,14 +1,26 @@
 import React from 'react'
 import Typography from '@mui/material/Typography';
 import './dashboard.css'
+import Grid from '@mui/material/Grid';
 
 export default function Dashboard() {
   return (
     <div className='content'>
       <div className="points">
-        <h4 className='flex-between'>Current Points <span>Points</span></h4>
-        <h4 className='flex-between'>Total Earned <span>Points</span></h4>
-        <h4 className='flex-between'>Total Reedemed <span>Points</span></h4>
+        <Grid container className='flex-between'>
+          <Grid item xs={4} className="center-align left">
+          <h1 className='size'>Current Points</h1>
+          <h3 className='size'>Points</h3>
+          </Grid>
+          <Grid item xs={4} className="center-align">
+          <h1 className='size'>Total Earned</h1>
+          <h3 className='size'>Points</h3>
+          </Grid>
+          <Grid item xs={4} className="center-align right">
+          <h1 className='size'>Total Reedemed</h1>
+          <h3 className='size'>Points</h3>
+          </Grid>
+        </Grid>
       </div>
       <Typography paragraph>
           Welcome {JSON.parse(localStorage.getItem('data')).data.name}!

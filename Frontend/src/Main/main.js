@@ -151,7 +151,7 @@ export default function Main() {
       // setTimeout(() => {
       //   window.location.reload();
       // }, 500);
-      console.log(JSON.parse(localStorage.getItem('data')).data.name);
+      console.log(JSON.parse(localStorage.getItem('data')));
       console.log('a')
       // setPokemon(res.data);
       // setLoading(false);

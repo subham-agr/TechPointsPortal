@@ -1,36 +1,50 @@
-import React from 'react'
-import Avatar from '../../static/images/avatar/1.jpeg'
-import './prizes.css'
+import * as React from 'react';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Avatar from '../../static/images/avatar/1.jpeg';
+import product_card from './productdata'
+import Grid from '@mui/material/Grid';
+// import Grid from '@mui/material/Unstable_Grid2';
 
 export default function Prize() {
+
+  const products = product_card.map((item) =>
+  <Grid item xl={2} lg={3} xs={12} sm={6} md={4}>
+  <Card sx={{ maxWidth: 345 }} key={item.id}>
+  <CardMedia
+    component="img"
+    height="140"
+    image={item.img}
+    alt="Product1"
+  />
+  <CardContent>
+    <Typography gutterBottom variant="h5" component="div">
+      {item.name}
+    </Typography>
+    <Typography gutterBottom variant="body2" color="text.secondary">
+      {item.desc}
+    </Typography>
+    <Typography variant="h5" component="h2">
+      {item.points}
+    </Typography>
+  </CardContent>
+  <CardActions>
+    <Button size="small">Reedem Now</Button>
+    <Button size="small">Add to Cart</Button>
+  </CardActions>
+  </Card>
+  </Grid>
+  );
+
   return (
-    <>
-    <h1>Search Bar here</h1>
-    <hr />
-    <div className='Card'>
-      <div className="image-card">
-        <img src={Avatar} className="image" alt="Image of Product" />
-      </div>
-      <div className="details">
-        <div className="item-name">
-            <h3 className='heading'>Name</h3>
-        </div>
-        <div className="item-description">
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptate, praesentium.
-        </div>
-      </div>
-      <div className="reedem">
-        <div className="price">
-            <h4>200Points</h4>
-        </div>
-        <div className="reedem-btn">
-            <button>Reedem</button>
-        </div>
-        <div className="cart-btn">
-            <button>Add to Cart</button>
-        </div>
-      </div>
+    <div className="products">
+      <Grid container spacing={2}>
+          {products}
+      </Grid>
     </div>
-    </>
-  )
+  );
 }
