@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import './App.css';
 import Login from '../Login/Login';
 import Main from '../Main/main';
+import Status from '../Components/Status/status';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Routes>
           <Route path="/dashboard" element={<Main />}></Route>
           <Route path="/" element={<Login />}></Route>
+          <Route path="/status" element={<Status />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

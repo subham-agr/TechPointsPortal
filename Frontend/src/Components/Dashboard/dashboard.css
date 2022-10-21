@@ -19,9 +19,33 @@
     justify-content: space-between;
 }
 
+.center-align{
+    text-align: center;
+}
+
+.left{
+    border-right: 2px ridge white;
+}
+
+.right{
+    border-left: 2px ridge white;
+}
+
 @media screen and (max-width: 450px) {
     .points{
         font-size: 2px;
         /* font-style: italic; */
+    }
+}
+
+@media screen and (max-width: 950px) {
+    .size{
+        font-size: medium;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .size{
+        font-size: small;
     }
 }
