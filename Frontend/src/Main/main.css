@@ -17,6 +17,16 @@
     display: flex;
 }
 
+.justify-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.margin{
+    margin: 1rem 0;
+}
+
 @media screen and (max-width: 450px) {
     .none{
         display: none;

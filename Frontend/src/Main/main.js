@@ -183,22 +183,22 @@ export default function Main() {
       setprize(false);
       sethistory(false);
     }
-    if(e.target.id === '1'){
+    if(e.target.innerHTML === 'Dashboard'){
       setdashboard(true);
     }
-    else if(e.target.id === '2'){
+    else if(e.target.innerHTML === 'Notification'){
       setnotif(true);
     }
-    else if(e.target.id === '3'){
+    else if(e.target.innerHTML === 'Prizes'){
       setprize(true);
     }
-    else if(e.target.id === '4'){
+    else if(e.target.innerHTML === 'Orders'){
       setorder(true);
     }
-    else if(e.target.id === '5'){
+    else if(e.target.innerHTML === 'History'){
       sethistory(true);
     }
-    else if(e.target.id === '6'){
+    else if(e.target.innerHTML === 'Logout'){
       localStorage.clear();
       window.location.replace("http://localhost:3000/");
     }
@@ -223,13 +223,13 @@ export default function Main() {
           </IconButton>
           <div className="flex-between">
           <div className="title">
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" className='mx-2 none justify-content'>
             Tech Points Portal
           </Typography>
           </div>
           {/* <Tooltip title="Open settings"> */}
           <div className="avatar-icon flex">
-          <Typography variant="h6" className='mx-2 none'>
+          <Typography variant="h6" className='mx-2 none justify-content margin'>
           {JSON.parse(localStorage.getItem('data')).data.roll_number}
           </Typography>
           <Box sx = {{ flexGrow: 1}}>
@@ -272,8 +272,8 @@ export default function Main() {
               </ListItemButton>
             </ListItem>
           ))} */}
-          <ListItem key="1" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton id='1' onClick={(e) => handleclick(e)} sx={{
+          <ListItem key="1" id='1' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -290,8 +290,8 @@ export default function Main() {
               <ListItemText primary="Dashboard" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="2" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton id='2' onClick={(e) => handleclick(e)} sx={{
+          <ListItem key="2" id='2' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -308,8 +308,8 @@ export default function Main() {
               <ListItemText primary="Notification" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="3" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton id='3' onClick={(e) => handleclick(e)} sx={{
+          <ListItem key="3" id='3' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -326,8 +326,8 @@ export default function Main() {
               <ListItemText primary="Prizes" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="4" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton id='4' onClick={(e) => handleclick(e)} sx={{
+          <ListItem key="4" id='4' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -344,8 +344,8 @@ export default function Main() {
               <ListItemText primary="Orders" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="5" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton id='5' onClick={(e) => handleclick(e)} sx={{
+          <ListItem key="5" id='5' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,
@@ -362,8 +362,8 @@ export default function Main() {
               <ListItemText primary="History" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="6" disablePadding sx={{ display: 'block' }}>
-            <ListItemButton id='6' onClick={(e) => handleclick(e)} sx={{
+          <ListItem key="6" id='6' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+            <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
               px: 2.5,

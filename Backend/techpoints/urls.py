@@ -11,4 +11,9 @@ router.register(r'products',views.ProductViewset)
 urlpatterns = [ 
     path('',include(router.urls)),
     path("userdata", views.posts, name="auth"),
+    path('students',views.points),
+    path('orders',views.orders),
+    path('notifs',views.notifs),
+    path('products',views.products),
+    path('transactions',views.transactions),
 ]
