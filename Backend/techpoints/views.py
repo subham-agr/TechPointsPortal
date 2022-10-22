@@ -117,11 +117,11 @@ def transactions(request):
         data_list=[]
         for transaction in transactions:
             if transaction.earned:
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event-product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
             else:
                 products = Product.objects.filter(product_id=transaction.product_id)
                 product = products[0]
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event-product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
 
