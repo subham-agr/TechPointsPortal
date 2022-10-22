@@ -1,9 +1,24 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Typography from '@mui/material/Typography';
 import './dashboard.css'
 import Grid from '@mui/material/Grid';
+import axios from "axios";
 
 export default function Dashboard() {
+  // var [points, setpoint] = useState();
+  // const data = {
+  //   roll_number:JSON.parse(localStorage.getItem('data')).data.roll_number,
+  // };
+  // const isntpoint = true;
+  // if(isntpoint){
+  //   axios
+  //   .post('http://127.0.0.1:8000/students', data, {headers: {"Content-Type": "application/json"}})
+  //   .then((res) => {
+  //   points = res.data[0];
+  //   setpoint(res.data[0])
+  //   });
+  // } 
+  // console.log(points)
   return (
     <div className='content'>
       <div className="points">

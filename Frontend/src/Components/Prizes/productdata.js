@@ -4,7 +4,7 @@ const product_card = [
         name: "ESP32",
         desc: "Micro-controller",
         points: 300,
-        img: "/logo/itc.jpg"
+        img: "http://127.0.0.1:8000/media/Screenshot_2022-10-07_194956.jpg"
     },
     {
         id:2,

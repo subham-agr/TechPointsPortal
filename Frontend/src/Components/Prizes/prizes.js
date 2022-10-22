@@ -25,7 +25,7 @@ export default function Prize() {
   // const images = importAll(require.context('../../static/images/logo', false, '/\.jpg/'));
 
   const products = product_card.slice(page-12,page).map((item) =>
-  <Grid item xl={2} xs={12} sm={6} md={4}>
+  <Grid item xl={4} xs={12} sm={6} md={4}>
   <Card sx={{ maxWidth: 345 }} key={item.id}>
   <CardMedia
     component="img"

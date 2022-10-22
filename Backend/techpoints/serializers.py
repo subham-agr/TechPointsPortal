@@ -9,12 +9,12 @@ class StudentSerializer(serializers.HyperlinkedModelSerializer):
 class TransactionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Transaction
-        fields = ('transaction_id','roll_number','earned','points_earned','event_name','product_id')
+        fields = ('transaction_id','earned','points_earned','event_name','product_id','time','date','remarks')
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Order
-        fields = ('order_id','roll_number','product_id','status')
+        fields = ('order_id','product_id','status','deliver_time')
 
 class ProductSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
