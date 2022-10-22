@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 class Student(models.Model):
@@ -26,5 +27,6 @@ class Order(models.Model):
 class Product(models.Model):
     product_id = models.CharField(max_length=20)
     product_name = models.CharField(max_length=255)
+    product_desc = models.TextField(default='Description')
     points = models.IntegerField()
     product_picture = models.ImageField(blank=True,null=True)

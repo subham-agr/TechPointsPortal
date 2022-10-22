@@ -5,6 +5,7 @@ import './App.css';
 import Login from '../Login/Login';
 import Main from '../Main/main';
 import Status from '../Components/Status/status';
+import Notification from '../Components/Notifications/notifications';
 
 function App() {
   return (
@@ -24,6 +25,8 @@ function App() {
           {/* <Dashboard/> */}
         </div>
         <Routes>
+          <Route path="/dashboard" element={<Main />}></Route>
+          <Route path="/notif" element={<Notification />}></Route>
           <Route path="/dashboard" element={<Main />}></Route>
           <Route path="/" element={<Login />}></Route>
           <Route path="/status" element={<Status />}></Route>

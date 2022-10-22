@@ -1,39 +1,39 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Typography from '@mui/material/Typography';
 import './dashboard.css'
 import Grid from '@mui/material/Grid';
 import axios from "axios";
 
 export default function Dashboard() {
-  // var [points, setpoint] = useState();
-  // const data = {
-  //   roll_number:JSON.parse(localStorage.getItem('data')).data.roll_number,
-  // };
+  var [points, setpoint] = useState([]);
+  const data = {
+    roll_number:JSON.parse(localStorage.getItem('data')).data.roll_number,
+  };
   // const isntpoint = true;
-  // if(isntpoint){
-  //   axios
-  //   .post('http://127.0.0.1:8000/students', data, {headers: {"Content-Type": "application/json"}})
-  //   .then((res) => {
-  //   points = res.data[0];
-  //   setpoint(res.data[0])
-  //   });
-  // } 
-  // console.log(points)
+    useEffect(() =>{
+      axios
+    .post('http://127.0.0.1:8000/students', data, {headers: {"Content-Type": "application/json"}})
+    .then((res) => {
+    points = res.data[0];
+    setpoint(res.data[0])
+    });
+    }, [])
+    console.log(points)
   return (
     <div className='content'>
       <div className="points">
         <Grid container className='flex-between'>
           <Grid item xs={4} className="center-align left">
           <h1 className='size'>Current Points</h1>
-          <h3 className='size'>Points</h3>
+          <h1 className='size'>{points.points_earned}</h1>
           </Grid>
           <Grid item xs={4} className="center-align">
           <h1 className='size'>Total Earned</h1>
-          <h3 className='size'>Points</h3>
+          <h1 className='size'>{points.total_points}</h1>
           </Grid>
           <Grid item xs={4} className="center-align right">
           <h1 className='size'>Total Reedemed</h1>
-          <h3 className='size'>Points</h3>
+          <h1 className='size'>{points.points_redeemed}</h1>
           </Grid>
         </Grid>
       </div>
