@@ -43,7 +43,7 @@ export default function Prize() {
   <CardMedia
     component="img"
     height="140"
-    image={"http://localhost:8000"+item.product_picture}
+    image={item.product_picture}
     alt="Product1"
   />
   <CardContent>

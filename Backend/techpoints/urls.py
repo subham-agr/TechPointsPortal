@@ -16,4 +16,6 @@ urlpatterns = [
     path('notifs',views.notifs),
     path('products',views.products),
     path('transactions',views.transactions),
+    path('add_points',views.add_points,name='add_points'),
+    path('order_admin',views.order_admin),
 ]

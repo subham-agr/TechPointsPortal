@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+from http.client import HTTPResponse
 from typing import OrderedDict
 from datetime import datetime
 from django.shortcuts import render
@@ -6,11 +7,12 @@ from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from django.conf import settings
-
+import pandas as pd
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view
 import base64
+from django.db.models import Q
 
 from .models import *
 from .serializers import *
@@ -59,7 +61,7 @@ def products(request):
             order_id+=str(len(orders)+1)
         else:
             order_id+='0001'
-        order = Order(order_id=order_id,product_id=data['product_id'],status='pending',deliver_time='')
+        order = Order(order_id=order_id,product_id=data['product_id'],status='Ordered',deliver_time='')
         order.save()
         transactions = Transaction.objects.filter(transaction_id__startswith=data['roll_number'])
         transaction_id = data['roll_number']
@@ -69,18 +71,21 @@ def products(request):
             transaction_id+=str(len(transactions)+1)
         else:
             transaction_id+='0001'
-        transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d-%m-%Y"),remarks='Redeemed')
+        transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks='Redeemed')
         transaction.save()
-        transactionr = Transaction.objects.all()
-        student_serializer = TransactionSerializer(transactionr, many=True)
-        return JsonResponse(student_serializer.data, safe=False)
+        order_serializer = OrderSerializer(order, many=True)
+        return JsonResponse(order_serializer.data, safe=False)
         # 'safe=False' for objects serialization
     elif request.method=='GET':
         products = Product.objects.all()
-        product_serializer = ProductSerializer(products,many=True)
-        return JsonResponse(product_serializer.data,safe=False)
+        data_list = []
+        for product in products:
+            img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
+            data = OrderedDict([('product_id',product.product_id),('product_name',product.product_name),('points',product.points),('product_desc',product.product_desc),('product_picture',img_path)])
+            data_list.append(data)
+        return JsonResponse(data_list,safe=False)
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 def orders(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
@@ -93,6 +98,11 @@ def orders(request):
             data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
+    elif request.method == 'GET':
+        data = request.headers['Order-Id']
+        order = Order.objects.filter(order_id=data)
+        order_serializer = OrderSerializer(order, many=True)
+        return JsonResponse(order_serializer.data, safe=False)
 
 @api_view(['POST'])
 def notifs(request):
@@ -117,13 +127,69 @@ def transactions(request):
         data_list=[]
         for transaction in transactions:
             if transaction.earned:
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event-product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
             else:
                 products = Product.objects.filter(product_id=transaction.product_id)
                 product = products[0]
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event-product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
+
+def add_points(request):
+    if request.method == 'GET':
+        return render(request,'points.html',{'not_uploaded':True})
+    csv_file = request.FILES["csv_file"]
+    file_data = csv_file.read().decode('utf-8')
+    lines = file_data.split("\n")
+    for i in range(1,len(lines)-1):
+        data = lines[i].strip().split(',')
+        student_obj = Student.objects.filter(roll_number=data[0])
+        if len(student_obj)==0:
+            student = Student(roll_number=data[0],name=data[1],points_earned=int(data[2]),points_redeemed=0,total_points=int(data[2]))
+            student.save()
+            transaction = Transaction(transaction_id=data[0]+'0001',points_earned=int(data[2]),event_name=data[4]+', '+data[3],earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[5])
+            transaction.save()
+        else:
+            student = student_obj[0]
+            student.points_earned+=int(data[2])
+            student.total_points+=int(data[2])
+            student.save()
+            transactions = Transaction.objects.filter(transaction_id__startswith=data[0])
+            transaction_id = data[0]
+            if transactions:
+                for i in range(4-len(str(len(transactions)))):
+                    transaction_id+='0'
+                transaction_id+=str(len(transactions)+1)
+            else:
+                transaction_id+='0001'
+            transaction = Transaction(transaction_id=transaction_id,event_name=data[4]+', '+data[3],points_earned=int(data[2]),earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[5])
+            transaction.save()
+    return render(request,'points.html',{'not_uploaded':False})
+
+@api_view(['GET','POST'])
+def order_admin(request):
+    if request.method == 'GET':
+        orders = Order.objects.filter(Q(status='Ordered') | Q(status='Dispatched'))
+        data_list=[]
+        for order in orders:
+            products = Product.objects.filter(product_id=order.product_id)
+            product = products[0]
+            img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
+            data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
+            data_list.append(data)
+        return JsonResponse(data_list, safe=False)
+    
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        orders = Order.objects.filter(order_id=data['order_id'])
+        order = orders[0]
+        if order.status == 'Ordered':
+            order.status = 'Dispatched'
+        elif order.status == 'Dispatched':
+            order.status = 'Delivered'
+            order.deliver_time = datetime.now().strftime("%d %b,%Y %H:%M:%S") 
+        order.save()
+        return JsonResponse({'message': 'Successfully Changed Order Status!'})
 
 @csrf_exempt
 def posts(request):
@@ -137,12 +203,13 @@ def posts(request):
                     f"Qkpy3jC17jwlqOVBISsAub5fOEyRWr9yi48VcgeK:tcTFJGIB2zUeyp858njYs9jtr4MY8kPZuDTvKiqjK5VP6D0me08R0guexRBk81A648HnT9skxfFWdUSYFMrOwzhh8t5pcwkXglkEVFGlGc75WJovG3NsFe8mbsxrMvAi".encode("utf-8")
                 ).decode("utf-8")
     data = JSONParser().parse(request)
-    print(data.get('code'))
     r = requests.post('https://gymkhana.iitb.ac.in/profiles/oauth/token/', data='code='+data.get('code')+'&grant_type=authorization_code', headers=headers) 
     b = requests.get('https://gymkhana.iitb.ac.in/profiles/user/api/user/?fields=first_name,last_name,profile_picture,roll_number,email', headers={'Authorization':'Bearer '+r.json()['access_token']})
     data=b.json()
-    print(data)
     if data['last_name'] is NULL:
         data['last_name']=''
+    if len(Student.objects.filter(roll_number=data['roll_number']))==0:
+        student = Student(roll_number=data['roll_number'],name=data['first_name']+' '+data['last_name'],total_points=0,points_redeemed=0,points_earned=0)
+        student.save()
     user_data=OrderedDict([('name',data['first_name'] + ' ' + data['last_name']),('picture',data['profile_picture']),('roll_number',data['roll_number']),('email',data['email'])])
     return JsonResponse(user_data)
