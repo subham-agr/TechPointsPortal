@@ -176,7 +176,7 @@ def order_admin(request):
             products = Product.objects.filter(product_id=order.product_id)
             product = products[0]
             img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
-            data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
+            data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_id',product.product_id),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
     

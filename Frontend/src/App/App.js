@@ -4,7 +4,8 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 import './App.css';
 import Login from '../Login/Login';
 import Main from '../Main/main';
-import Status from '../Components/Status/status';
+// import Status from '../Components/Status/status';
+import Order_Admin from '../Components/Order_admin/order_admin';
 import Notification from '../Components/Notifications/notifications';
 import Dashboard from '../Components/Dashboard/dashboard';
 import Prize from '../Components/Prizes/prizes';
@@ -32,6 +33,7 @@ function App() {
           {/* <Route path="/notif" element={<Notification />}></Route> */}
           {/* <Route path="/dashboard" element={<Main />}></Route> */}
           <Route path="/" element={<Login />}/>
+          <Route path="/order_admin" element={<Order_Admin />}/>
           <Route path="/dashboard" element={<Main />}>
             <Route path="" element={<Dashboard />}/>
             <Route path="products" element={<Prize />}/>
