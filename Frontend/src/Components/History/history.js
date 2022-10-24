@@ -30,7 +30,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 //   },
 // }));
 
-export default function CustomizedTables() {
+export default function History() {
 
   const [transactionlist, settransaction] = React.useState([]);
   const data = {
@@ -59,6 +59,8 @@ export default function CustomizedTables() {
     //   var element1 = document.getElementById(transactionlist[0].transaction_id);
     //   element1.classList.add("bgred")
     // }
+    // console.log(transactionlist[0].event_product_name)
+    // console.log(transactionlist[0].event_product_name)
 
   return (
     <TableContainer component={Paper}>
@@ -75,19 +77,37 @@ export default function CustomizedTables() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {transactionlist.map((row) => (
-            <TableRow key={row.transaction_id} id={row.transaction_id}>
-              <StyledTableCell component="th" scope="row">
+          {transactionlist.map((row) => {
+            if(row.earned)
+            return <TableRow key={row.transaction_id} id={row.transaction_id} 
+              // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
+              className="table-row bggreen"
+              >
+                <StyledTableCell className='green' component="th" scope="row">
+                  {row.transaction_id}
+                </StyledTableCell>
+                <StyledTableCell className='green'>{row.date}</StyledTableCell>
+                <StyledTableCell className='green'>{row.time}</StyledTableCell>
+                <StyledTableCell className='green'>{row.points}</StyledTableCell>
+                {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
+                <StyledTableCell className='green'>{row.event_product_name}</StyledTableCell>
+                <StyledTableCell className='green'>{row.remarks}</StyledTableCell>
+              </TableRow>
+            return <TableRow key={row.transaction_id} id={row.transaction_id} 
+            // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
+            className="table-row bgred"
+            >
+              <StyledTableCell className='red' component="th" scope="row">
                 {row.transaction_id}
               </StyledTableCell>
-              <StyledTableCell >{row.date}</StyledTableCell>
-              <StyledTableCell >{row.time}</StyledTableCell>
-              <StyledTableCell >{row.points}</StyledTableCell>
+              <StyledTableCell className='red'>{row.date}</StyledTableCell>
+              <StyledTableCell className='red'>{row.time}</StyledTableCell>
+              <StyledTableCell className='red'>{row.points}</StyledTableCell>
               {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
-              <StyledTableCell >{row.event_product_name}</StyledTableCell>
-              <StyledTableCell >{row.remarks}</StyledTableCell>
+              <StyledTableCell className='red'>{row.event_product_name}</StyledTableCell>
+              <StyledTableCell className='red'>{row.remarks}</StyledTableCell>
             </TableRow>
-          ))}
+})}
         </TableBody>
       </Table>
     </TableContainer>

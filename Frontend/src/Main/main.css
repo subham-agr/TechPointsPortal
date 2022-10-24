@@ -24,7 +24,12 @@
 }
 
 .margin{
-    margin: 1rem 0;
+    margin: 0 0.5rem !important;
+}
+
+.textnone{
+    text-decoration: none;
+    color: black;
 }
 
 @media screen and (max-width: 450px) {

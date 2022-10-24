@@ -30,7 +30,7 @@ import ShoppingBasketIcon from '@mui/icons-material/ShoppingBasket';
 import RedeemIcon from '@mui/icons-material/Redeem';
 import HistoryIcon from '@mui/icons-material/History';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { Routes, useNavigate } from 'react-router-dom';
 import {useSearchParams} from 'react-router-dom';  
 import axios from "axios";
 import { useLocation } from 'react-router-dom';
@@ -40,6 +40,9 @@ import Prize from '../Components/Prizes/prizes';
 import Orders from '../Components/Orders/orders';
 import History from '../Components/History/history';
 import './main.css'
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { BrowserRouter, Route, Link, Routes ,Outlet } from 'react-router-dom';
+import Login from '../Login/Login';
 
 const drawerWidth = 240;
 
@@ -112,11 +115,20 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
+const darkTheme = createTheme({
+  palette: {
+    // mode: 'dark',
+    primary: {
+      main: '#021325',
+    },
+  },
+});
+
 export default function Main() {
 
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [isdashboard, setdashboard] = React.useState(true);
+  const [isdashboard, setdashboard] = React.useState(false);
   const [isnotif, setnotif] = React.useState(false);
   const [isorder, setorder] = React.useState(false);
   const [isprize, setprize] = React.useState(false);
@@ -185,6 +197,7 @@ export default function Main() {
     }
     if(e.target.innerHTML === 'Dashboard'){
       setdashboard(true);
+      // window.location.replace("http://localhost:3000/dashboard")
     }
     else if(e.target.innerHTML === 'Notification'){
       setnotif(true);
@@ -207,6 +220,7 @@ export default function Main() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
+      <ThemeProvider theme={darkTheme}>
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
@@ -242,6 +256,7 @@ export default function Main() {
             {/* </Tooltip> */}
         </Toolbar>
       </AppBar>
+      </ThemeProvider>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
@@ -272,7 +287,8 @@ export default function Main() {
               </ListItemButton>
             </ListItem>
           ))} */}
-          <ListItem key="1" id='1' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+          <Link to="/dashboard" className='textnone'>
+          <ListItem key="1" id='1' disablePadding sx={{ display: 'block' }}>
             <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
@@ -290,7 +306,9 @@ export default function Main() {
               <ListItemText primary="Dashboard" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="2" id='2' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+          </Link>
+          <Link to="/dashboard/notification" className='textnone'>
+          <ListItem key="2" id='2' disablePadding sx={{ display: 'block' }}>
             <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
@@ -308,7 +326,9 @@ export default function Main() {
               <ListItemText primary="Notification" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="3" id='3' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+          </Link>
+          <Link to="/dashboard/products" className='textnone'>
+          <ListItem key="3" id='3' disablePadding sx={{ display: 'block' }}>
             <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
@@ -323,10 +343,12 @@ export default function Main() {
               >
                 <RedeemIcon />
               </ListItemIcon>
-              <ListItemText primary="Prizes" sx={{opacity: open ? 1 : 0}} />
+              <ListItemText primary="Products" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="4" id='4' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+          </Link>
+          <Link to="/dashboard/orders" className='textnone'>
+          <ListItem key="4" id='4' disablePadding sx={{ display: 'block' }}>
             <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
@@ -344,7 +366,9 @@ export default function Main() {
               <ListItemText primary="Orders" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
-          <ListItem key="5" id='5' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
+          </Link>
+          <Link to="/dashboard/history" className='textnone'>
+          <ListItem key="5" id='5' disablePadding sx={{ display: 'block' }}>
             <ListItemButton sx={{
               minHeight: 48,
               justifyContent: open ? 'initial' : 'center',
@@ -362,6 +386,7 @@ export default function Main() {
               <ListItemText primary="History" sx={{opacity: open ? 1 : 0}} />
             </ListItemButton>
           </ListItem>
+          </Link>
           <ListItem key="6" id='6' onClick={(e) => handleclick(e)} disablePadding sx={{ display: 'block' }}>
             <ListItemButton sx={{
               minHeight: 48,
@@ -409,11 +434,7 @@ export default function Main() {
       </Drawer>
       <Box className='main' component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-        {isdashboard?(<Dashboard />):(<></>)}
-        {isprize?(<Prize />):(<></>)}
-        {isnotif?(<Notification />):(<></>)}
-        {isorder?(<Orders />):(<></>)}
-        {ishistory?(<History />):(<></>)}
+        <Outlet />
       </Box>
     </Box>
   );

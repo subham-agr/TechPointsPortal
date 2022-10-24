@@ -25,11 +25,11 @@ export default function Dashboard() {
         <Grid container className='flex-between'>
           <Grid item xs={4} className="center-align left">
           <h1 className='size'>Current Points</h1>
-          <h1 className='size'>{points.points_earned}</h1>
+          <h1 className='size'>{points.total_points}</h1>
           </Grid>
           <Grid item xs={4} className="center-align">
           <h1 className='size'>Total Earned</h1>
-          <h1 className='size'>{points.total_points}</h1>
+          <h1 className='size'>{points.points_earned}</h1>
           </Grid>
           <Grid item xs={4} className="center-align right">
           <h1 className='size'>Total Reedemed</h1>
