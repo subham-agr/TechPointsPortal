@@ -1,9 +1,17 @@
-.bggreen{
-    background-color: green;
-    color: white;
+/* .bggreen{
+    background: linear-gradient(90deg, rgba(33,234,9,1) 0%, rgba(23,250,171,1) 100%);
+    color: white !important;
 }
 
 .bgred{
-    background-color: red;
-    color: white;
+    background: linear-gradient(90deg, rgba(234,9,9,1) 0%, rgba(250,79,23,1) 100%);
+    color: white !important;
+} */
+
+.red{
+    color: red !important;
+}
+
+.green{
+    color: green !important;
 }

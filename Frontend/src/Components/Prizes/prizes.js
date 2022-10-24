@@ -26,6 +26,7 @@ export default function Prize() {
   // const images = importAll(require.context('../../static/images/logo', false, '/\.jpg/'));
 
   const [productslist, setlist] = React.useState([]);
+  var pages = productslist.length/12+1;
 
   useEffect(() =>{
     axios
@@ -33,9 +34,24 @@ export default function Prize() {
   .then((res) => {
   // console.log(res.data)
   setlist(res.data)
-  console.log(res.data[0].product_picture)
+  // console.log(res.data[0].product_picture)
   });
   }, [])
+
+  function handleClick(event) {
+    const data = {
+      roll_number:JSON.parse(localStorage.getItem('data')).data.roll_number,
+      product_id:JSON.parse(JSON.stringify(event.target.id))
+    };
+
+      axios
+    .post('http://127.0.0.1:8000/products',data, {headers: {"Content-Type": "application/json"}})
+    .then((res) => {
+    console.log(res)
+    // setlist(res.data)
+    // console.log(res.data[0].product_picture)
+    });
+  } 
 
   const products = productslist.slice(page-12,page).map((item) =>
   <Grid item xl={4} xs={12} sm={6} md={4}>
@@ -58,8 +74,8 @@ export default function Prize() {
     </Typography>
   </CardContent>
   <CardActions>
-    <Button size="small">Reedem Now</Button>
-    <Button size="small">Add to Cart</Button>
+    <Button size="small" id={item.product_id} onClick={handleClick}>Reedem Now</Button>
+    {/* <Button size="small">Add to Cart</Button> */}
   </CardActions>
   </Card>
   </Grid>
@@ -75,7 +91,7 @@ export default function Prize() {
           {products}
       </Grid>
       <div className="pagination">
-        <Pagination count={2} color="primary" onChange={handleChange} />
+        <Pagination count={pages} color="primary" onChange={handleChange} />
       </div>
     </div>
   );

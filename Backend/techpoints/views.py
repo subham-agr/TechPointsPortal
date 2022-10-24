@@ -1,4 +1,5 @@
 from asyncio.windows_events import NULL
+from email.message import Message
 from http.client import HTTPResponse
 from typing import OrderedDict
 from datetime import datetime
@@ -73,8 +74,8 @@ def products(request):
             transaction_id+='0001'
         transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks='Redeemed')
         transaction.save()
-        order_serializer = OrderSerializer(order, many=True)
-        return JsonResponse(order_serializer.data, safe=False)
+        # order_serializer = OrderSerializer(order, many=True)
+        return JsonResponse({"Message":"Success"}, safe=False)
         # 'safe=False' for objects serialization
     elif request.method=='GET':
         products = Product.objects.all()
@@ -95,7 +96,7 @@ def orders(request):
             products = Product.objects.filter(product_id=order.product_id)
             product = products[0]
             img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
-            data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
+            data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('product_desc',product.product_desc),('points',product.points),('picture',str(img_path))])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
     elif request.method == 'GET':
@@ -115,7 +116,7 @@ def notifs(request):
                 products = Product.objects.filter(product_id=order.product_id)
                 product = products[0]
                 img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
-                data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
+                data = OrderedDict([('order_id',order.order_id),('deliver_time',order.deliver_time),('status',order.status),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
                 data_list.append(data)
         return JsonResponse(data_list, safe=False)
 
@@ -127,11 +128,11 @@ def transactions(request):
         data_list=[]
         for transaction in transactions:
             if transaction.earned:
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event-product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
             else:
                 products = Product.objects.filter(product_id=transaction.product_id)
                 product = products[0]
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event-product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
 
