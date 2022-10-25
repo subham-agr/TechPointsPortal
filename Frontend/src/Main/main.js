@@ -148,7 +148,7 @@ export default function Main() {
   // console.log(data)
   const [isLoading, setLoading] = useState(true);
   const [pokemon, setPokemon] = useState();
-  useEffect(() =>{
+
   if (localStorage.getItem("data") === null) {
     if (query.get("code") === null) {
       window.location.replace("http://localhost:3000");
@@ -182,7 +182,6 @@ export default function Main() {
         }
       });
   }
-}, [])
   // else{
   console.log(JSON.parse(localStorage.getItem("data")).data.roll_number);
   // }
