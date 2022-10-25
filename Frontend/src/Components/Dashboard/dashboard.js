@@ -3,8 +3,28 @@ import Typography from '@mui/material/Typography';
 import './dashboard.css'
 import Grid from '@mui/material/Grid';
 import axios from "axios";
+import CountUp from 'react-countup'
 
 export default function Dashboard() {
+
+  // let valueDisplays = document.querySelectorAll(".num");
+  // let interval = 500;
+
+  // valueDisplays.forEach((valueDisplay) => {
+  //   let startvalue = 0;
+  //   let endvalue = parseInt(valueDisplay.getAttribute("data-val"));
+  //   // console.log(endvalue)
+  //   let duration = Math.floor(interval / endvalue);
+  //   let counter = setInterval(function () {
+  //     startvalue = startvalue + 1;
+  //     valueDisplay.textContent = startvalue;
+  //     if(startvalue == endvalue-1){
+  //       clearInterval(counter);
+  //       valueDisplay.textContent = endvalue;
+  //     }
+  //   }, duration);
+  // })
+
   var [points, setpoint] = useState([]);
   const data = {
     roll_number:JSON.parse(localStorage.getItem('data')).data.roll_number,
@@ -25,15 +45,15 @@ export default function Dashboard() {
         <Grid container className='flex-between'>
           <Grid item xs={4} className="center-align left">
           <h1 className='size'>Current Points</h1>
-          <h1 className='size'>{points.total_points}</h1>
+          <h1 className='size num' data-val={points.total_points}><CountUp end={5000} /></h1>
           </Grid>
           <Grid item xs={4} className="center-align">
           <h1 className='size'>Total Earned</h1>
-          <h1 className='size'>{points.points_earned}</h1>
+          <h1 className='size num' data-val={points.points_earned}><CountUp end={points.points_earned} /></h1>
           </Grid>
           <Grid item xs={4} className="center-align right">
           <h1 className='size'>Total Reedemed</h1>
-          <h1 className='size'>{points.points_redeemed}</h1>
+          <h1 className='size num' data-val={points.points_redeemed}><CountUp end={points.points_redeemed} /></h1>
           </Grid>
         </Grid>
       </div>
