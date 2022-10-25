@@ -18,18 +18,36 @@
 }
 
 .justify-content{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
 }
 
-.margin{
+.margin1{
     margin: 0 0.5rem !important;
 }
 
 .textnone{
     text-decoration: none;
     color: black;
+}
+
+.footer{
+    width: 100%;
+    /* background-color: black; */
+    background: linear-gradient(to left top, #03063e, #45015c);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+}
+
+.footer-heading{
+    margin: 1rem;
+    text-decoration: none;
+    font-weight: lighter;
 }
 
 @media screen and (max-width: 450px) {

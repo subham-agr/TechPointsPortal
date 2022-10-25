@@ -11,6 +11,14 @@ import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import "./prizes.css";
 import axios from "axios";
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
+import DirectionsIcon from "@mui/icons-material/Directions";
+
 // import {Button} from '@mui/material'
 import {
   Dialog,
@@ -58,13 +66,17 @@ export default function Prize() {
 
     // console.log(event);
 
+    if(window.confirm("Do you want to reedem the item?") ){
       axios
-    .post('http://127.0.0.1:8000/products',data, {headers: {"Content-Type": "application/json"}})
-    .then((res) => {
-    console.log(res)
-    // setlist(res.data)
-    // console.log(res.data[0].product_picture)
-    });
+      .post("http://127.0.0.1:8000/products", data, {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res);
+        // setlist(res.data)
+        // console.log(res.data[0].product_picture)
+      });
+    }
     // setopen(false);
   }
 
@@ -74,6 +86,34 @@ export default function Prize() {
 
   return (
     <div className="products">
+      <div className="searchbar">
+        <Paper
+          component="form"
+          sx={{
+            p: "2px 4px",
+            display: "flex",
+            alignItems: "center",
+            width: 400,
+          }}
+        >
+          <InputBase
+            sx={{ ml: 1, flex: 1 }}
+            placeholder="Search Products Here"
+            inputProps={{ "aria-label": "search products" }}
+          />
+          <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+            <SearchIcon />
+          </IconButton>
+          {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+          <IconButton
+            color="primary"
+            sx={{ p: "10px" }}
+            aria-label="directions"
+          >
+            <DirectionsIcon />
+          </IconButton> */}
+        </Paper>
+      </div>
       <Grid container spacing={2}>
         {productslist.slice(page - 12, page).map((item) => (
           <Grid item xl={4} xs={12} sm={6} md={4}>
@@ -122,9 +162,9 @@ export default function Prize() {
               </CardActions>
             </Card>
           </Grid>
-))}
+        ))}
       </Grid>
-      <div className="pagination">
+      <div className="pagination justify-content">
         <Pagination count={pages} color="primary" onChange={handleChange} />
       </div>
     </div>
