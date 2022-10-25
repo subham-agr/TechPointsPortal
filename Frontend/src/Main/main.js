@@ -127,11 +127,6 @@ const darkTheme = createTheme({
 export default function Main() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
-  const [isdashboard, setdashboard] = React.useState(false);
-  const [isnotif, setnotif] = React.useState(false);
-  const [isorder, setorder] = React.useState(false);
-  const [isprize, setprize] = React.useState(false);
-  const [ishistory, sethistory] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -188,25 +183,7 @@ export default function Main() {
   // }, []);
 
   function handleclick(e) {
-    if (e) {
-      setdashboard(false);
-      setnotif(false);
-      setorder(false);
-      setprize(false);
-      sethistory(false);
-    }
-    if (e.target.innerHTML === "Dashboard") {
-      setdashboard(true);
-      // window.location.replace("http://localhost:3000/dashboard")
-    } else if (e.target.innerHTML === "Notification") {
-      setnotif(true);
-    } else if (e.target.innerHTML === "Prizes") {
-      setprize(true);
-    } else if (e.target.innerHTML === "Orders") {
-      setorder(true);
-    } else if (e.target.innerHTML === "History") {
-      sethistory(true);
-    } else if (e.target.innerHTML === "Logout") {
+    if(window.confirm("Are you sure you want to Logout?")){
       localStorage.clear();
       window.location.replace("http://localhost:3000/");
     }
@@ -215,8 +192,10 @@ export default function Main() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <ThemeProvider theme={darkTheme}>
-        <AppBar position="fixed" open={open}>
+      <ThemeProvider 
+      theme={darkTheme}
+      >
+        <AppBar position="fixed" open={open} sx={{background: 'linear-gradient(to left top, #03063e, #45015c)'}}>
           <Toolbar>
             <IconButton
               color="inherit"
@@ -231,12 +210,12 @@ export default function Main() {
               <MenuIcon />
             </IconButton>
             <div className="flex-between">
-              <div className="title">
+              <div className="title justify-content">
                 <Typography
                   variant="h6"
                   noWrap
                   component="div"
-                  className="mx-2 none justify-content"
+                  className="mx-2 none"
                 >
                   Tech Points Portal
                 </Typography>
@@ -245,7 +224,7 @@ export default function Main() {
               <div className="avatar-icon flex">
                 <Typography
                   variant="h6"
-                  className="mx-2 none justify-content margin"
+                  className="mx-2 none justify-content margin1"
                 >
                   {JSON.parse(localStorage.getItem("data")).data.roll_number}
                 </Typography>
@@ -265,7 +244,7 @@ export default function Main() {
           </Toolbar>
         </AppBar>
       </ThemeProvider>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open} sx={{background: 'linear-gradient(to left top, #03063e, #45015c)'}}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
@@ -421,10 +400,10 @@ export default function Main() {
               </ListItemButton>
             </ListItem>
           </Link>
+          <a onClick={(e) => handleclick(e)}>
           <ListItem
             key="6"
             id="6"
-            onClick={(e) => handleclick(e)}
             disablePadding
             sx={{ display: "block" }}
           >
@@ -447,6 +426,7 @@ export default function Main() {
               <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
+          </a>
         </List>
         <Divider />
         {/* <List>
@@ -478,6 +458,9 @@ export default function Main() {
         <DrawerHeader />
         <Outlet />
       </Box>
+      <div className='footer'>
+        <h4 className='footer-heading'>Developed by Web Team with ❤️ | Institute Technical Council 2022</h4>
+      </div>
     </Box>
   );
 }

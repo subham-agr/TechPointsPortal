@@ -15,3 +15,8 @@
 .green{
     color: green !important;
 }
+
+.justify-content{
+    display: flex;
+    justify-content: center;
+}

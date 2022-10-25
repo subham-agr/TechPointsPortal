@@ -70,7 +70,11 @@ export default function Order_Admin() {
   }
 
   return (
-    <TableContainer className='table' component={Paper}>
+    <div className='margin'>
+      <div className='heading'>
+      <h1>ORDER STATUS PAGE ADMIN</h1>
+      </div>
+      <TableContainer className='table' component={Paper}>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -103,5 +107,6 @@ export default function Order_Admin() {
         </TableBody>
       </Table>
     </TableContainer>
+    </div>
   );
 }

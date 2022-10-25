@@ -45,15 +45,15 @@ export default function Dashboard() {
         <Grid container className='flex-between'>
           <Grid item xs={4} className="center-align left">
           <h1 className='size'>Current Points</h1>
-          <h1 className='size num' data-val={points.total_points}><CountUp end={5000} /></h1>
+          <h1 className='size num' data-val={points.total_points}><CountUp end={points.total_points} duration={2.5} /></h1>
           </Grid>
           <Grid item xs={4} className="center-align">
           <h1 className='size'>Total Earned</h1>
-          <h1 className='size num' data-val={points.points_earned}><CountUp end={points.points_earned} /></h1>
+          <h1 className='size num' data-val={points.points_earned}><CountUp end={points.points_earned} duration={2.5} /></h1>
           </Grid>
           <Grid item xs={4} className="center-align right">
           <h1 className='size'>Total Reedemed</h1>
-          <h1 className='size num' data-val={points.points_redeemed}><CountUp end={points.points_redeemed} /></h1>
+          <h1 className='size num' data-val={points.points_redeemed}><CountUp end={points.points_redeemed} duration={2.5} /></h1>
           </Grid>
         </Grid>
       </div>
