@@ -51,13 +51,15 @@ def products(request):
         products = Product.objects.filter(product_id=data['product_id'])
         student = students[0]
         product = products[0]
+        if student.total_points - product.points < 0:
+            return JsonResponse(OrderedDict([("success",False)]),safe=False)
         student.points_redeemed+=product.points
         student.total_points-=product.points
         student.save()
         orders = Order.objects.filter(order_id__startswith=data['roll_number'])
         order_id = data['roll_number']
-        if orders:
-            for i in range(4-len(str(len(orders)))):
+        if len(orders)!=0:
+            for i in range(4-len(str(len(orders)+1))):
                 order_id+='0'
             order_id+=str(len(orders)+1)
         else:
@@ -66,17 +68,15 @@ def products(request):
         order.save()
         transactions = Transaction.objects.filter(transaction_id__startswith=data['roll_number'])
         transaction_id = data['roll_number']
-        if transactions:
-            for i in range(4-len(str(len(transactions)))):
+        if len(transactions)!=0:
+            for i in range(4-len(str(len(transactions)+1))):
                 transaction_id+='0'
             transaction_id+=str(len(transactions)+1)
         else:
             transaction_id+='0001'
         transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks='Redeemed')
         transaction.save()
-        # order_serializer = OrderSerializer(order, many=True)
-        return JsonResponse({"Message":"Success"}, safe=False)
-        # 'safe=False' for objects serialization
+        return JsonResponse(OrderedDict([('success',True)]), safe=False)
     elif request.method=='GET':
         products = Product.objects.all()
         data_list = []
@@ -101,11 +101,13 @@ def orders(request):
         return JsonResponse(data_list, safe=False)
     elif request.method == 'GET':
         data = request.headers['Order-Id']
-        order = Order.objects.filter(order_id=data)
-        order_serializer = OrderSerializer(order, many=True)
-        return JsonResponse(order_serializer.data, safe=False)
+        order = Order.objects.filter(order_id=data)[0]
+        product = Product.objects.filter(product_id=order.product_id)[0]
+        img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
+        order_data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('product_desc',product.product_desc),('points',product.points),('picture',str(img_path))])
+        return JsonResponse(order_data, safe=False)
 
-@api_view(['POST'])
+@api_view(['POST','PUT','DELETE'])
 def notifs(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
@@ -119,6 +121,20 @@ def notifs(request):
                 data = OrderedDict([('order_id',order.order_id),('deliver_time',order.deliver_time),('status',order.status),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
                 data_list.append(data)
         return JsonResponse(data_list, safe=False)
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        order = Order.objects.filter(order_id=data['order_id'])[0]
+        order.deliver_time = ''
+        order.save()
+        return JsonResponse(OrderedDict([('success',True)]),safe=False)
+    elif request.method == 'DELETE':
+        data = JSONParser().parse(request)
+        orders = Order.objects.filter(order_id__startswith=data['roll_number'])
+        for order in orders:
+            order.deliver_time = ''
+            order.save()
+        return JsonResponse(OrderedDict([('success',True)]))
+
 
 @api_view(['POST'])
 def transactions(request):
@@ -146,24 +162,24 @@ def add_points(request):
         data = lines[i].strip().split(',')
         student_obj = Student.objects.filter(roll_number=data[0])
         if len(student_obj)==0:
-            student = Student(roll_number=data[0],name=data[1],points_earned=int(data[2]),points_redeemed=0,total_points=int(data[2]))
+            student = Student(roll_number=data[0],name='',points_earned=int(data[1]),points_redeemed=0,total_points=int(data[1]))
             student.save()
-            transaction = Transaction(transaction_id=data[0]+'0001',points_earned=int(data[2]),event_name=data[4]+', '+data[3],earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[5])
+            transaction = Transaction(transaction_id=data[0]+'0001',points_earned=int(data[1]),event_name=data[3]+', '+data[2],earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[4])
             transaction.save()
         else:
             student = student_obj[0]
-            student.points_earned+=int(data[2])
-            student.total_points+=int(data[2])
+            student.points_earned+=int(data[1])
+            student.total_points+=int(data[1])
             student.save()
             transactions = Transaction.objects.filter(transaction_id__startswith=data[0])
             transaction_id = data[0]
             if transactions:
-                for i in range(4-len(str(len(transactions)))):
+                for i in range(4-len(str(len(transactions)+1))):
                     transaction_id+='0'
                 transaction_id+=str(len(transactions)+1)
             else:
                 transaction_id+='0001'
-            transaction = Transaction(transaction_id=transaction_id,event_name=data[4]+', '+data[3],points_earned=int(data[2]),earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[5])
+            transaction = Transaction(transaction_id=transaction_id,event_name=data[3]+', '+data[2],points_earned=int(data[1]),earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[4])
             transaction.save()
     return render(request,'points.html',{'not_uploaded':False})
 
@@ -209,8 +225,13 @@ def posts(request):
     data=b.json()
     if data['last_name'] is NULL:
         data['last_name']=''
-    if len(Student.objects.filter(roll_number=data['roll_number']))==0:
+    student_list = Student.objects.filter(roll_number=data['roll_number'])
+    if len(student_list)==0:
         student = Student(roll_number=data['roll_number'],name=data['first_name']+' '+data['last_name'],total_points=0,points_redeemed=0,points_earned=0)
         student.save()
+    else:
+        student = student_list[0]
+        if student.name == '':
+            student.name = data['first_name']+' '+data['last_name']
     user_data=OrderedDict([('name',data['first_name'] + ' ' + data['last_name']),('picture',data['profile_picture']),('roll_number',data['roll_number']),('email',data['email'])])
     return JsonResponse(user_data)
