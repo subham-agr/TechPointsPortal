@@ -1,6 +1,7 @@
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/dist/js/bootstrap.bundle.min';
 import React, { useState } from 'react'
+import Logo from '../static/images/logo/itc.jpg'
 
 import './Login.css';
 
@@ -13,7 +14,7 @@ export default function Login() {
                 <div className="card">
                     <div className="row">
                         <div className="images">
-                            {/* <img src="logo.jpg" alt="Random Picture" /> */}
+                            <img src={Logo} alt="Random Picture" />
                         </div>
                     </div>
                     <div>

@@ -33,6 +33,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 export default function History() {
 
   const [transactionlist, settransaction] = React.useState([]);
+  const [history ,sethistory] = useState(true);
   const data = {
     roll_number:JSON.parse(localStorage.getItem('data')).data.roll_number,
   };
@@ -43,9 +44,13 @@ export default function History() {
     axios.post('http://localhost:8000/transactions', data, {headers: {"Content-Type": "application/json"}})
     .then((res) => {
       settransaction(res.data)
-      // console.log(res.data)
+      console.log(res.data)
     });
     }, [])
+
+    if(transactionlist === null){
+      sethistory(false);
+    }
 
     // console.log(transactionlist[0].earned)
 
@@ -63,53 +68,61 @@ export default function History() {
     // console.log(transactionlist[0].event_product_name)
 
   return (
-    <TableContainer component={Paper}>
-      <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Transaction Id</StyledTableCell>
-            <StyledTableCell >Date</StyledTableCell>
-            <StyledTableCell >Time</StyledTableCell>
-            <StyledTableCell >Points</StyledTableCell>
-            {/* <StyledTableCell >Status</StyledTableCell> */}
-            <StyledTableCell >Event/Item-Name</StyledTableCell>
-            <StyledTableCell >Remarks</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {transactionlist.map((row) => {
-            if(row.earned)
-            return <TableRow key={row.transaction_id} id={row.transaction_id} 
+    <div>
+      {history? (
+        <TableContainer component={Paper}>
+        <Table stickyHeader sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Transaction Id</StyledTableCell>
+              <StyledTableCell >Date</StyledTableCell>
+              <StyledTableCell >Time</StyledTableCell>
+              <StyledTableCell >Points</StyledTableCell>
+              {/* <StyledTableCell >Status</StyledTableCell> */}
+              <StyledTableCell >Event/Item-Name</StyledTableCell>
+              <StyledTableCell >Remarks</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {transactionlist.map((row) => {
+              if(row.earned)
+              return <TableRow key={row.transaction_id} id={row.transaction_id} 
+                // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
+                className="table-row bggreen"
+                >
+                  <StyledTableCell className='green' component="th" scope="row">
+                    {row.transaction_id}
+                  </StyledTableCell>
+                  <StyledTableCell className='green'>{row.date}</StyledTableCell>
+                  <StyledTableCell className='green'>{row.time}</StyledTableCell>
+                  <StyledTableCell className='green'>{row.points}</StyledTableCell>
+                  {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
+                  <StyledTableCell className='green'>{row.event_product_name}</StyledTableCell>
+                  <StyledTableCell className='green'>{row.remarks}</StyledTableCell>
+                </TableRow>
+              return <TableRow key={row.transaction_id} id={row.transaction_id} 
               // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
-              className="table-row bggreen"
+              className="table-row bgred"
               >
-                <StyledTableCell className='green' component="th" scope="row">
+                <StyledTableCell className='red' component="th" scope="row">
                   {row.transaction_id}
                 </StyledTableCell>
-                <StyledTableCell className='green'>{row.date}</StyledTableCell>
-                <StyledTableCell className='green'>{row.time}</StyledTableCell>
-                <StyledTableCell className='green'>{row.points}</StyledTableCell>
+                <StyledTableCell className='red'>{row.date}</StyledTableCell>
+                <StyledTableCell className='red'>{row.time}</StyledTableCell>
+                <StyledTableCell className='red'>{row.points}</StyledTableCell>
                 {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
-                <StyledTableCell className='green'>{row.event_product_name}</StyledTableCell>
-                <StyledTableCell className='green'>{row.remarks}</StyledTableCell>
+                <StyledTableCell className='red'>{row.event_product_name}</StyledTableCell>
+                <StyledTableCell className='red'>{row.remarks}</StyledTableCell>
               </TableRow>
-            return <TableRow key={row.transaction_id} id={row.transaction_id} 
-            // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
-            className="table-row bgred"
-            >
-              <StyledTableCell className='red' component="th" scope="row">
-                {row.transaction_id}
-              </StyledTableCell>
-              <StyledTableCell className='red'>{row.date}</StyledTableCell>
-              <StyledTableCell className='red'>{row.time}</StyledTableCell>
-              <StyledTableCell className='red'>{row.points}</StyledTableCell>
-              {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
-              <StyledTableCell className='red'>{row.event_product_name}</StyledTableCell>
-              <StyledTableCell className='red'>{row.remarks}</StyledTableCell>
-            </TableRow>
-})}
-        </TableBody>
-      </Table>
-    </TableContainer>
+  })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      ):(
+        <div className='justify-content'>
+          <h1>No Transactions to show</h1>
+        </div>
+      )}
+    </div>
   );
 }

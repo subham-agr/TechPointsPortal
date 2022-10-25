@@ -32,6 +32,11 @@
     align-items: center;
 }
 
+.row{
+    display: flex;
+    justify-content: center;
+}
+
 .btn-login{
     border:2px solid black;
     color: white;
@@ -42,7 +47,12 @@
     border-radius: 3px;
 }
 
-.images{
+img{
+    width: 7rem;
+    height: 7rem;
+}
+
+/* .images{
     background-image: url(../static//images/logo/itc.jpg);
     background-repeat: no-repeat;
     background-size: cover;
@@ -50,10 +60,10 @@
     left: 100px;
     width: 100px;
     height: 100px;
-    /* padding: 0 0.5rem; */
-    /* width: 25px;
-    height: 15px; */
-}
+    padding: 0 0.5rem;
+    width: 25px;
+    height: 15px;
+} */
 
 /* *{
     padding: 0;
@@ -96,4 +106,10 @@
 .form{
     text-align: center;
     align-items: center;
+}
+
+@media screen and (max-width: 900px) {
+    .card{
+        width: 40vw;
+    }
 }
