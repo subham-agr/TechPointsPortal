@@ -1,6 +1,7 @@
 from django.urls import path,include
 from . import views 
 from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
 
 router = routers.DefaultRouter()
 router.register(r'students',views.StudentViewset)
@@ -18,4 +19,5 @@ urlpatterns = [
     path('transactions',views.transactions),
     path('add_points',views.add_points,name='add_points'),
     path('order_admin',views.order_admin),
+    path('token', views.token)
 ]
