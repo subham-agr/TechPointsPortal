@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Points Upload</title>
+    <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <style>
         body{
@@ -21,7 +21,7 @@
             height: 80vh;
             background-color: #e9f5ff;
             border-radius: 50px;
-            padding: 10vh 5vw;
+            padding: 5vh 5vw;
             max-width: 950px;
         }
         button.btn{
@@ -32,48 +32,42 @@
         .logo{
             width: 200px;
         }
+        label{
+            margin: 1.5vh 0;
+        }
+        input{
+            max-width: 500px;
+            margin: auto;
+        }
     </style>
 </head>
 <body>
     <div class="cont">
         <img src="{% static 'assets/techiitb.png' %}" alt="" class="logo">
-        {% if not_uploaded %}
-        <h1>Upload a CSV File</h1>
+        <h1>Please Login</h1>
         <form action="{% url 'add_points' %}" method="POST" enctype="multipart/form-data" class="form-horizontal"> 
             {% csrf_token %}
             <div class="form-group">
-                <label for="name" class="control-label"></label>
+                <label for="user" class="control-label">USERNAME</label>
                 <div class="">
-                    <input type="file" name="csv_file" id="csv_file" required="True" class="form-control">
+                    <input type="text" name="user" id="user" required="True" class="form-control">
                 </div>                    
             </div>
             <div class="form-group">
-                <label for="name" class="control-label"></label>
+                <label for="password" class="control-label">PASSWORD</label>
                 <div class="">
-                    <input type="hidden" name="token" id="token" required="True" value="{{token}}" class="form-control">
-                </div>                    
-            </div>
-            <div class="form-group">
-                <label for="name" class="control-label"></label>
-                <div class="">
-                    <input type="hidden" name="user" id="user" required="True" value="{{user}}" class="form-control">
+                    <input type="password" name="password" id="password" required="True" class="form-control">
                 </div>                    
             </div>
             <div class="form-group">                    
                 <div class="col-md-offset-3" style="margin-bottom:10px;">
-                     <button class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-upload" viewBox="0 0 20 20">
-                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
-                      </svg>Upload</button>
+                     <button class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"/>
+                        <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+                      </svg>Login</button>
                 </div> 
             </div>
         </form>
-        {% else %}
-        <h1>Points Added Successfully!</h1>
-        <button onclick="location.replace('{% url "add_points" %}')" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M8 2a.5.5 0 0 1 .5.5v5h5a.5.5 0 0 1 0 1h-5v5a.5.5 0 0 1-1 0v-5h-5a.5.5 0 0 1 0-1h5v-5A.5.5 0 0 1 8 2Z"/>
-          </svg>Add More</button>
-        {% endif %}
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
 </body>
