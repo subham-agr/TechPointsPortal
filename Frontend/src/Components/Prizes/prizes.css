@@ -65,3 +65,14 @@
     justify-content: end;
     margin: 1rem;
 }
+
+.cardmedia{
+    /* height: 25vh !important; */
+    /* background-size: ; */
+    object-fit: contain !important;
+}
+
+.textdecoration{
+    text-decoration: none;
+    color: black;
+}

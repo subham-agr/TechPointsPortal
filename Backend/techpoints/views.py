@@ -210,7 +210,7 @@ def add_points(request):
 @api_view(['GET','POST','PUT'])
 def order_admin(request):
     if request.method == 'GET':
-        orders = Order.objects.filter(Q(status='Ordered') | Q(status='Dispatched'))
+        orders = Order.objects.filter(Q(status='Redeemed') | Q(status='Ordered') | Q(status='Dispatched'))
         data_list=[]
         for order in orders:
             products = Product.objects.filter(product_id=order.product_id)

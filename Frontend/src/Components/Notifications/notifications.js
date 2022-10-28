@@ -15,8 +15,10 @@ export default function MediaCard() {
     roll_number: JSON.parse(localStorage.getItem('data')).data.roll_number
   };
 
+  const token = JSON.parse(localStorage.getItem('data')).data.token;
+
   useEffect(() => {
-    axios.post('http://localhost:8000/notifs', data, { headers: { "Content-Type": "application/json" } })
+    axios.post('http://localhost:8000/notifs', data, {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
       .then((res) => {
         setnotification(res.data)
         console.log(res.data)
@@ -32,10 +34,11 @@ export default function MediaCard() {
 
   function handleClear() {
     console.log(data)
-    axios.delete('http://localhost:8000/notifs', data)
+    axios.delete('http://localhost:8000/notifs', data , {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
     .then((res) => {
       console.log(res)
     });
+    window.location.reload(true);
     // window.location.reload(true);
   }
 
@@ -43,7 +46,7 @@ export default function MediaCard() {
     const data1 = {
       order_id: JSON.parse(event.target.id)
     };
-    axios.put("http://localhost:8000/notifs", data1, {headers: { "Content-Type" : "application/json" }})
+    axios.put("http://localhost:8000/notifs", data1, {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
     .then((res) => {
       console.log(res)
     });
@@ -57,7 +60,7 @@ export default function MediaCard() {
       <div className='justify-content'>
         <h1>Notifications</h1>
       </div>
-      {notif? (
+      {notificationlist ? (
         <div className='auto'>
           <Button onClick={handleClear}>Clear All</Button>
         {notificationlist.map((item) => (
@@ -65,7 +68,8 @@ export default function MediaCard() {
           <Card sx={{ Width: 1, margin:2 }}>
             <CardMedia
               component="img"
-              height="140"
+              // height="140"
+              className='cardmedia'
               image={item.picture}
               alt="green iguana"
             />

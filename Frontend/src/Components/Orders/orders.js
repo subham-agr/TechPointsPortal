@@ -21,36 +21,42 @@ export default function Orders() {
 
   const [orderlist, setorderlist] = React.useState([]);
   const [order,setorder] = useState(true);
+  const [desclist, setdesc] = useState([]);
 
   const data = {
     roll_number: JSON.parse(localStorage.getItem("data")).data.roll_number,
   };
 
+  const token = JSON.parse(localStorage.getItem('data')).data.token;
+
   useEffect(() => {
     axios
-      .post("http://localhost:8000/orders", data, {
-        headers: { "Content-Type": "application/json" },
-      })
+      .post("http://localhost:8000/orders", data, {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
       .then((res) => {
         setorderlist(res.data);
-        console.log(res.data);
+        // console.log(res.data);
+        setdesc(res.data.sort((a,b) => 
+        (a.product_id>b.product_id) ? 1 : -1
+        ));
       });
   }, []);
 
-  console.log(orderlist)
+  // console.log(orderlist)
 
   if(orderlist == null){
     setorder(false)
   }
+
+  // console.log(desclist)
 
   return (
     <div>
       <div className="justify-content">
         <h1>Your Orders</h1>
       </div>
-      {order ? (
+      {orderlist ? (
         <div>
-        {orderlist.map((row) => {
+        {desclist.map((row) => {
           if(row.status === "Ordered")
           return <Accordion id={row.order_id} className="height">
             <AccordionSummary
@@ -63,7 +69,8 @@ export default function Orders() {
                 <Grid item xl={6} md={6}>
                   <CardMedia
                     component="img"
-                    height="140"
+                    // height="140"
+                    className="cardmedia"
                     image={row.picture}
                     alt="green iguana"
                   />
