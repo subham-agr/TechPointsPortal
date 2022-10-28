@@ -2,7 +2,7 @@ from asyncio.windows_events import NULL
 from email.message import Message
 from http.client import HTTPResponse
 from traceback import print_tb
-from typing import OrderedDict
+from typing import OrderedDict, final
 from datetime import datetime
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -63,6 +63,10 @@ def products(request):
         student.total_points-=product.points
         student.save()
         orders = Order.objects.filter(order_id__startswith=data['roll_number'])
+        now = datetime.now()
+        time = now.strftime("%H:%M:%S")
+        date = now.strftime("%d %b,%Y")
+        full = now.strftime("%d %b,%Y %H:%M:%S") 
         order_id = data['roll_number']
         if len(orders)!=0:
             for i in range(4-len(str(len(orders)+1))):
@@ -70,7 +74,7 @@ def products(request):
             order_id+=str(len(orders)+1)
         else:
             order_id+='0001'
-        order = Order(order_id=order_id,product_id=data['product_id'],status='Ordered',deliver_time='')
+        order = Order(order_id=order_id,product_id=data['product_id'],status='Ordered',deliver_time='',status_change_time=full)
         order.save()
         transactions = Transaction.objects.filter(transaction_id__startswith=data['roll_number'])
         transaction_id = data['roll_number']
@@ -80,7 +84,7 @@ def products(request):
             transaction_id+=str(len(transactions)+1)
         else:
             transaction_id+='0001'
-        transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks='Redeemed')
+        transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=time,date=date,remarks='Redeemed')
         transaction.save()
         return JsonResponse(OrderedDict([('success',True)]), safe=False)
     elif request.method=='GET':
@@ -147,14 +151,18 @@ def transactions(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         transactions = Transaction.objects.filter(transaction_id__startswith=data['roll_number'])
+        orders = Order.objects.filter(order_id__startswith=data['roll_number'])
         data_list=[]
         for transaction in transactions:
             if transaction.earned:
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks),('order_id','')])
             else:
                 products = Product.objects.filter(product_id=transaction.product_id)
                 product = products[0]
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                for order in orders:
+                    if order.status_change_time==transaction.date + ' ' + transaction.time:
+                        final_order = order
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks),('order_id',final_order.order_id)])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
 

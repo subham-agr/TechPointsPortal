@@ -36,7 +36,7 @@ class Order(models.Model):
         return f"{self.order_id} - {self.status}"
 
 class Product(models.Model):
-    product_id = models.CharField(max_length=20)
+    product_id = models.CharField(max_length=20,unique=True)
     product_name = models.CharField(max_length=255)
     product_desc = models.TextField(default='Description')
     product_link = models.CharField(max_length=500,blank=True,null=True)
