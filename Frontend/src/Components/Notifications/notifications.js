@@ -34,7 +34,7 @@ export default function MediaCard() {
 
   function handleClear() {
     console.log(data)
-    axios.delete('http://localhost:8000/notifs', data , {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
+    axios.delete('http://localhost:8000/notifs' , {data: {roll_number: JSON.parse(localStorage.getItem('data')).data.roll_number} ,headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
     .then((res) => {
       console.log(res)
     });

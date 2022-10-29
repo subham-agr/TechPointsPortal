@@ -1,7 +1,7 @@
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/dist/js/bootstrap.bundle.min';
 import React, { useState } from 'react'
-import Logo from '../static/images/logo/itc.jpg'
+import Logo from '../static/images/logo/itc.png'
 
 import './Login.css';
 

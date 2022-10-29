@@ -82,12 +82,13 @@ export default function Adminlogin() {
                     <Box
                         component="form"
                         sx={{
-                            '& > :not(style)': { m: 1, width: '25ch' },
+                            '& > :not(style)': { m: 1 },
                         }}
                         noValidate
                         autoComplete="off"
                         className='text-align'
                     >
+                        <h1>Admin Login</h1>
                         <ValidationTextField
                             label="User ID"
                             required

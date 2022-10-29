@@ -8,13 +8,92 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
+import TableFooter from "@mui/material/TableFooter";
+import TablePagination from "@mui/material/TablePagination";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import "./history.css";
+import PropTypes from "prop-types";
+import { useTheme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import IconButton from "@mui/material/IconButton";
+import FirstPageIcon from "@mui/icons-material/FirstPage";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import LastPageIcon from "@mui/icons-material/LastPage";
 import { Typography } from "@mui/material";
 import { Link } from "react-router-dom";
+
+function TablePaginationActions(props) {
+  const theme = useTheme();
+  const { count, page, onPageChange } = props;
+
+  // const handleFirstPageButtonClick = (event) => {
+  //   onPageChange(event, 0);
+  // };
+
+  const handleBackButtonClick = (event) => {
+    onPageChange(event, page - 1);
+  };
+
+  const handleNextButtonClick = (event) => {
+    onPageChange(event, page + 1);
+  };
+
+  // const handleLastPageButtonClick = (event) => {
+  //   onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  // };
+
+  return (
+    <Box sx={{ flexShrink: 0, ml: 2.5 }}>
+      {/* <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
+      </IconButton> */}
+      <IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
+        aria-label="previous page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowRight />
+        ) : (
+          <KeyboardArrowLeft />
+        )}
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / 10) - 1}
+        aria-label="next page"
+      >
+        {theme.direction === "rtl" ? (
+          <KeyboardArrowLeft />
+        ) : (
+          <KeyboardArrowRight />
+        )}
+      </IconButton>
+      {/* <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
+      </IconButton> */}
+    </Box>
+  );
+}
+
+TablePaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  // rowsPerPage: PropTypes.number.isRequired,
+};
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,6 +116,8 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 // }));
 
 export default function History() {
+  const [page, setPage] = React.useState(0);
+  // const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [transactionlist, settransaction] = React.useState([]);
   const [history, sethistory] = useState(true);
   const [desclist, setdesc] = useState([]);
@@ -44,18 +125,28 @@ export default function History() {
     roll_number: JSON.parse(localStorage.getItem("data")).data.roll_number,
   };
 
-  const token = JSON.parse(localStorage.getItem('data')).data.token;
+  const token = JSON.parse(localStorage.getItem("data")).data.token;
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
 
   // console.log(JSON.parse(localStorage.getItem('data')).data.roll_number)
   // const isntpoint = true;
   useEffect(() => {
     axios
-      .post("http://localhost:8000/transactions", data, {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
+      .post("http://localhost:8000/transactions", data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+      })
       .then((res) => {
         settransaction(res.data);
-        setdesc(res.data.sort((a,b) => 
-        (a.product_id>b.product_id) ? 1 : -1
-        ));
+        console.log(res.data);
+        setdesc(
+          res.data.sort((a, b) => (a.product_id > b.product_id ? 1 : -1))
+        );
       });
   }, []);
 
@@ -63,6 +154,7 @@ export default function History() {
     sethistory(false);
   }
 
+  var count = desclist.length;
   // console.log(transactionlist[0].earned)
 
   // console.log(transactionlist.length)
@@ -99,78 +191,93 @@ export default function History() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {desclist.map((row) => {
+              {desclist.slice(page * 10, page * 10 + 10).map((row) => {
                 if (row.earned)
                   return (
-                        <TableRow
-                          key={row.transaction_id}
-                          id={row.transaction_id}
-                          // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
-                          className="table-row bggreen"
-                        >
-                          <StyledTableCell
-                            className="green"
-                            component="th"
-                            scope="row"
-                          >
-                            {row.transaction_id}
-                          </StyledTableCell>
-                          <StyledTableCell className="green">
-                            {row.date}
-                          </StyledTableCell>
-                          <StyledTableCell className="green">
-                            {row.time}
-                          </StyledTableCell>
-                          <StyledTableCell className="green">
-                            {row.points}
-                          </StyledTableCell>
-                          {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
-                          <StyledTableCell className="green">
-                            {row.event_product_name}
-                          </StyledTableCell>
-                          <StyledTableCell className="green">
-                            {row.remarks}
-                          </StyledTableCell>
-                        </TableRow>
-                  );
-                var link = '/dashboard/orders#';
-                return (
-                      <TableRow
-                        key={row.transaction_id}
-                        id={row.transaction_id}
-                        // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
-                        className="table-row bgred"
+                    <TableRow
+                      key={row.transaction_id}
+                      id={row.transaction_id}
+                      // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
+                      className="table-row bggreen"
+                    >
+                      <StyledTableCell
+                        className="green"
+                        component="th"
+                        scope="row"
                       >
-                        <StyledTableCell
-                          className="red"
-                          component="th"
-                          scope="row"
-                        >
-                          {row.transaction_id}
-                        </StyledTableCell>
-                        <StyledTableCell className="red">
-                          {row.date}
-                        </StyledTableCell>
-                        <StyledTableCell className="red">
-                          {row.time}
-                        </StyledTableCell>
-                        <StyledTableCell className="red">
-                          {row.points}
-                        </StyledTableCell>
-                        {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
-                        <Link to={link} className="links">
-                        <StyledTableCell className="red">
-                          {row.event_product_name}
-                        </StyledTableCell>
-                        </Link>
-                        <StyledTableCell className="red">
-                          {row.remarks}
-                        </StyledTableCell>
-                      </TableRow>
-                  
+                        {row.transaction_id}
+                      </StyledTableCell>
+                      <StyledTableCell className="green">
+                        {row.date}
+                      </StyledTableCell>
+                      <StyledTableCell className="green">
+                        {row.time}
+                      </StyledTableCell>
+                      <StyledTableCell className="green">
+                        {row.points}
+                      </StyledTableCell>
+                      {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
+                      <StyledTableCell className="green">
+                        {row.event_product_name}
+                      </StyledTableCell>
+                      <StyledTableCell className="green">
+                        {row.remarks}
+                      </StyledTableCell>
+                    </TableRow>
+                  );
+                var link = "/dashboard/orders#" + String(row.order_id);
+                return (
+                  <TableRow
+                    key={row.transaction_id}
+                    id={row.transaction_id}
+                    // className={`table-row${isearn.current ? " bggreen" : " bgred"}`}
+                    className="table-row bgred"
+                  >
+                    <StyledTableCell className="red" component="th" scope="row">
+                      {row.transaction_id}
+                    </StyledTableCell>
+                    <StyledTableCell className="red">
+                      {row.date}
+                    </StyledTableCell>
+                    <StyledTableCell className="red">
+                      {row.time}
+                    </StyledTableCell>
+                    <StyledTableCell className="red">
+                      {row.points}
+                    </StyledTableCell>
+                    {/* <StyledTableCell >{row.earned}</StyledTableCell> */}
+                    <Link to={link} className="links">
+                      <StyledTableCell className="red">
+                        {row.event_product_name}
+                      </StyledTableCell>
+                    </Link>
+                    <StyledTableCell className="red">
+                      {row.remarks}
+                    </StyledTableCell>
+                  </TableRow>
                 );
               })}
             </TableBody>
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  colSpan={12}
+                  count={count}
+                  rowsPerPage={10}
+                  page={page}
+                  // SelectProps={{
+                  //   inputProps: {
+                  //     'aria-label': 'rows per page',
+                  //   },
+                  //   native: true,
+                  // }}
+                  rowsPerPageOptions={[]}
+                  onPageChange={handleChangePage}
+                  // onRowsPerPageChange={handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
           </Table>
         </TableContainer>
       ) : (

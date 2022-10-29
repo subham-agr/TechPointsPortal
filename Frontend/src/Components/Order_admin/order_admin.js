@@ -80,6 +80,8 @@ export default function Order_Admin() {
         // setorder_admin(res.data)
         console.log(res);
       });
+
+      window.location.reload(true);
   }
 
   function handleOrder(event){
@@ -129,11 +131,11 @@ export default function Order_Admin() {
               <StyledTableCell>Product Id</StyledTableCell>
               <StyledTableCell>Product Name</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
-              <StyledTableCell>Ordered</StyledTableCell>
+              {/* <StyledTableCell>Ordered</StyledTableCell>
               <StyledTableCell>Dispatched</StyledTableCell>
               <StyledTableCell>Delivered</StyledTableCell>
-              <StyledTableCell>Delivery Date</StyledTableCell>
-              {/* <StyledTableCell>Change Status</StyledTableCell> */}
+              <StyledTableCell>Delivery Date</StyledTableCell> */}
+              <StyledTableCell>Change Status</StyledTableCell>
               {/* <StyledTableCell >Protein&nbsp;(g)</StyledTableCell> */}
             </TableRow>
           </TableHead>
@@ -147,7 +149,7 @@ export default function Order_Admin() {
                 <StyledTableCell>{row.product_id}</StyledTableCell>
                 <StyledTableCell>{row.product_name}</StyledTableCell>
                 <StyledTableCell>{row.status}</StyledTableCell>
-                <StyledTableCell>
+                {/* <StyledTableCell>
                   <Button id={row.order_id} disabled={isordered} onClick={handleOrder}>
                     Ordered
                   </Button>
@@ -173,6 +175,9 @@ export default function Order_Admin() {
                       renderInput={(params) => <TextField {...params} />}
                     />
                   </LocalizationProvider>
+                </StyledTableCell> */}
+                <StyledTableCell>
+                  <Button id={row.order_id} onClick={handleClick}>Change Status</Button>
                 </StyledTableCell>
               </StyledTableRow>
             ))}
