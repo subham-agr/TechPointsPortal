@@ -43,8 +43,11 @@ import "./main.css";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { BrowserRouter, Route, Link, Routes, Outlet } from "react-router-dom";
 import Login from "../Login/Login";
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const drawerWidth = 240;
+const settings = ['Logout'];
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -136,6 +139,16 @@ export default function Main() {
     setOpen(false);
   };
 
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
   let query = useQuery();
   if (localStorage.getItem("code") === null) {
     localStorage.setItem("code", query.get("code"));
@@ -152,9 +165,7 @@ export default function Main() {
       code: query.get("code"),
     };
 
-    axios.post("http://127.0.0.1:8000/userdata", data, {
-        headers: { "Content-Type": "application/json" },
-      })
+    axios.post("http://127.0.0.1:8000/userdata", data, {headers: {"Content-Type": "application/json"}})
       .then((res) => {
         localStorage.setItem("data", JSON.stringify(res));
         // setTimeout(() => {
@@ -181,6 +192,8 @@ export default function Main() {
   console.log(JSON.parse(localStorage.getItem("data")).data.roll_number);
   // }
   // }, []);
+
+  const token = JSON.parse(localStorage.getItem('data')).data.token;
 
   function handleclick(e) {
     if(window.confirm("Are you sure you want to Logout?")){
@@ -220,7 +233,6 @@ export default function Main() {
                   Tech Points Portal
                 </Typography>
               </div>
-              {/* <Tooltip title="Open settings"> */}
               <div className="avatar-icon flex">
                 <Typography
                   variant="h6"
@@ -229,7 +241,8 @@ export default function Main() {
                   {JSON.parse(localStorage.getItem("data")).data.roll_number}
                 </Typography>
                 <Box sx={{ flexGrow: 1 }}>
-                  <IconButton sx={{ p: 0 }}>
+                  <Tooltip title="Logout">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar
                       alt="Remy Sharp"
                       src={
@@ -237,10 +250,33 @@ export default function Main() {
                       }
                     />
                   </IconButton>
+                  </Tooltip>
+                  <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleclick}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
                 </Box>
               </div>
             </div>
-            {/* </Tooltip> */}
+            
           </Toolbar>
         </AppBar>
       </ThemeProvider>
@@ -255,7 +291,7 @@ export default function Main() {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
+        <List sx={{height: "100%"}}>
           {/* {['Dashboard', 'Notification', 'Logout'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
@@ -303,31 +339,6 @@ export default function Main() {
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to="/dashboard/notification" className="textnone">
-            <ListItem key="2" id="2" disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <NotificationsIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Notification"
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </Link>
           <Link to="/dashboard/products" className="textnone">
             <ListItem key="3" id="3" disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -353,7 +364,7 @@ export default function Main() {
               </ListItemButton>
             </ListItem>
           </Link>
-          <Link to="/dashboard/orders" className="textnone">
+          {/* <Link to="/dashboard/orders" className="textnone">
             <ListItem key="4" id="4" disablePadding sx={{ display: "block" }}>
               <ListItemButton
                 sx={{
@@ -374,7 +385,7 @@ export default function Main() {
                 <ListItemText primary="Orders" sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
-          </Link>
+          </Link> */}
           <Link to="/dashboard/history" className="textnone">
             <ListItem key="5" id="5" disablePadding sx={{ display: "block" }}>
               <ListItemButton
@@ -400,17 +411,43 @@ export default function Main() {
               </ListItemButton>
             </ListItem>
           </Link>
-          <a onClick={(e) => handleclick(e)}>
+          <Link to="/dashboard/notification" className="textnone">
+            <ListItem key="2" id="2" disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+              >
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <NotificationsIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Notification"
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+          {/* <a onClick={(e) => handleclick(e)}>
           <ListItem
             key="6"
             id="6"
             disablePadding
-            sx={{ display: "block" }}
+            sx={{ display: "block",postion: "fixed",bottom: 0 }}
           >
             <ListItemButton
               sx={{
                 minHeight: 48,
                 justifyContent: open ? "initial" : "center",
+                // alignItems: "end",
                 px: 2.5,
               }}
             >
@@ -426,7 +463,7 @@ export default function Main() {
               <ListItemText primary="Logout" sx={{ opacity: open ? 1 : 0 }} />
             </ListItemButton>
           </ListItem>
-          </a>
+          </a> */}
         </List>
         <Divider />
         {/* <List>
@@ -457,6 +494,7 @@ export default function Main() {
       <Box className="main" component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Outlet />
+        <div className='topmargin'></div>
       </Box>
       <div className='footer'>
         <h4 className='footer-heading'>Developed by Web Team with ❤️ | Institute Technical Council 2022</h4>

@@ -15,7 +15,8 @@
 .card{
     width: 25vw;
     height: auto;
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(20px);
     padding: 3rem 2rem;
     text-align: center;
     border-radius: 20px;
@@ -23,8 +24,14 @@
     /* border: 2px solid black; */
 }
 
+.images{
+    background-color: transparent;
+}
+
 .container{
-    background-color: rgb(19, 210, 210);
+    /* background-color: rgb(19, 210, 210); */
+    background-image: url(../static/images/bg/bg.jpg);
+    background-size: cover;
     width: 100vw;
     height: 100vh;
     display: flex;
@@ -93,7 +100,7 @@ img{
 }
 
 .btn1:hover{
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.5);
     border: 1px solid;
     color: black;
     cursor: pointer;
@@ -111,5 +118,20 @@ img{
 @media screen and (max-width: 900px) {
     .card{
         width: 40vw;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .container{
+        background-image: url(../static/images/bg/mobile.png);
+    }
+
+    .card{
+        background-color: transparent;
+        backdrop-filter: blur(30px);
+    }
+
+    .btn1:hover{
+        background-color: white;
     }
 }

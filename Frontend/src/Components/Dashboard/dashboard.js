@@ -29,10 +29,13 @@ export default function Dashboard() {
   const data = {
     roll_number:JSON.parse(localStorage.getItem('data')).data.roll_number,
   };
+
+  const token = JSON.parse(localStorage.getItem('data')).data.token;
+
   // const isntpoint = true;
     useEffect(() =>{
       axios
-    .post('http://127.0.0.1:8000/students', data, {headers: {"Content-Type": "application/json"}})
+    .post('http://127.0.0.1:8000/students', data, {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
     .then((res) => {
     points = res.data[0];
     setpoint(res.data[0])

@@ -6,7 +6,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Avatar from "../../static/images/avatar/1.jpeg";
-import product_card from "./productdata";
+// import product_card from "./productdata";
 import Grid from "@mui/material/Grid";
 import Pagination from "@mui/material/Pagination";
 import "./prizes.css";
@@ -42,19 +42,20 @@ export default function Prize() {
   // const images = importAll(require.context('../../static/images/logo', false, '/\.jpg/'));
 
   const [productslist, setlist] = React.useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   // const [idproduct, setproduct] = useState();
   // var idproduct = useRef();
   var pages = productslist.length / 12 + 1;
 
+  const token = JSON.parse(localStorage.getItem('data')).data.token;
+
   useEffect(() => {
     axios
-      .get("http://127.0.0.1:8000/products", {
-        headers: { "Content-Type": "application/json" },
-      })
+      .get("http://127.0.0.1:8000/products", {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
       .then((res) => {
         // console.log(res.data)
         setlist(res.data);
-        // console.log(res.data[0].product_id)
+        console.log(res.data[0])
       });
   }, []);
 
@@ -68,14 +69,13 @@ export default function Prize() {
 
     if(window.confirm("Do you want to reedem the item?") ){
       axios
-      .post("http://127.0.0.1:8000/products", data, {
-        headers: { "Content-Type": "application/json" },
-      })
+      .post("http://127.0.0.1:8000/products", data, {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
       .then((res) => {
         console.log(res);
         // setlist(res.data)
         // console.log(res.data[0].product_picture)
       });
+      window.location.replace("http://localhost:3000/dashboard/orders")
     }
     // setopen(false);
   }
@@ -100,6 +100,7 @@ export default function Prize() {
             sx={{ ml: 1, flex: 1 }}
             placeholder="Search Products Here"
             inputProps={{ "aria-label": "search products" }}
+            onChange={event => {setSearchTerm(event.target.value)}}
           />
           <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
             <SearchIcon />
@@ -115,22 +116,35 @@ export default function Prize() {
         </Paper>
       </div>
       <Grid container spacing={2}>
-        {productslist.slice(page - 12, page).map((item) => (
+        {productslist.filter((val) => {
+          if(searchTerm === ""){
+            return val
+          }
+          else if(val.product_name.toLowerCase().includes(searchTerm.toLowerCase())){
+            return val
+          }
+        }).slice(page - 12, page).map((item) => (
           <Grid item xl={4} xs={12} sm={6} md={4}>
             <Card sx={{ maxWidth: 345 }} key={item.product_id}>
               <CardMedia
                 component="img"
-                height="140"
+                // height="140"
+                sx={{
+                  height: "25vh"
+                }}
+                className="cardmedia"
                 image={item.product_picture}
                 alt="Product1"
               />
               <CardContent>
+                <a href={item.link} className="textdecoration">
                 <Typography gutterBottom variant="h5" component="div">
                   {item.product_name}
                 </Typography>
-                <Typography gutterBottom variant="body2" color="text.secondary">
+                </a>
+                {/* <Typography gutterBottom variant="body2" color="text.secondary">
                   {item.product_desc}
-                </Typography>
+                </Typography> */}
                 <Typography variant="h5" component="h2">
                   {item.points}
                 </Typography>
