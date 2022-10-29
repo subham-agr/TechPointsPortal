@@ -1,9 +1,11 @@
 from asyncio.windows_events import NULL
 from email.message import Message
 from http.client import HTTPResponse
-from typing import OrderedDict
+from traceback import print_tb
+from typing import OrderedDict, final
 from datetime import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.http.response import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
@@ -11,9 +13,13 @@ from django.conf import settings
 import pandas as pd
 import requests
 from django.views.decorators.csrf import csrf_exempt
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 import base64
 from django.db.models import Q
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import check_password
+from rest_framework.permissions import AllowAny
 
 from .models import *
 from .serializers import *
@@ -57,6 +63,10 @@ def products(request):
         student.total_points-=product.points
         student.save()
         orders = Order.objects.filter(order_id__startswith=data['roll_number'])
+        now = datetime.now()
+        time = now.strftime("%H:%M:%S")
+        date = now.strftime("%d %b,%Y")
+        full = now.strftime("%d %b,%Y %H:%M:%S") 
         order_id = data['roll_number']
         if len(orders)!=0:
             for i in range(4-len(str(len(orders)+1))):
@@ -64,7 +74,7 @@ def products(request):
             order_id+=str(len(orders)+1)
         else:
             order_id+='0001'
-        order = Order(order_id=order_id,product_id=data['product_id'],status='Ordered',deliver_time='')
+        order = Order(order_id=order_id,product_id=data['product_id'],status='Redeemed',deliver_time='',status_change_time=full)
         order.save()
         transactions = Transaction.objects.filter(transaction_id__startswith=data['roll_number'])
         transaction_id = data['roll_number']
@@ -74,7 +84,7 @@ def products(request):
             transaction_id+=str(len(transactions)+1)
         else:
             transaction_id+='0001'
-        transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks='Redeemed')
+        transaction = Transaction(transaction_id=transaction_id,product_id=data['product_id'],earned=False,time=time,date=date,remarks='Redeemed')
         transaction.save()
         return JsonResponse(OrderedDict([('success',True)]), safe=False)
     elif request.method=='GET':
@@ -82,7 +92,7 @@ def products(request):
         data_list = []
         for product in products:
             img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
-            data = OrderedDict([('product_id',product.product_id),('product_name',product.product_name),('points',product.points),('product_desc',product.product_desc),('product_picture',img_path)])
+            data = OrderedDict([('product_id',product.product_id),('product_name',product.product_name),('points',product.points),('product_desc',product.product_desc),('link',product.product_link),('product_picture',img_path)])
             data_list.append(data)
         return JsonResponse(data_list,safe=False)
 
@@ -96,7 +106,7 @@ def orders(request):
             products = Product.objects.filter(product_id=order.product_id)
             product = products[0]
             img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
-            data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('product_desc',product.product_desc),('points',product.points),('picture',str(img_path))])
+            data = OrderedDict([('order_id',order.order_id),('status',order.status),('change_time',order.status_change_time),('tentative',order.tentative_delivery),('product_name',product.product_name),('product_desc',product.product_desc),('link',product.product_link),('points',product.points),('picture',str(img_path)),('deliver',order.deliver_time)])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
     elif request.method == 'GET':
@@ -104,7 +114,7 @@ def orders(request):
         order = Order.objects.filter(order_id=data)[0]
         product = Product.objects.filter(product_id=order.product_id)[0]
         img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
-        order_data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_name',product.product_name),('product_desc',product.product_desc),('points',product.points),('picture',str(img_path))])
+        order_data = OrderedDict([('order_id',order.order_id),('status',order.status),('change_time',order.status_change_time),('tentative',order.tentative_delivery),('product_name',product.product_name),('product_desc',product.product_desc),('link',product.product_link),('points',product.points),('picture',str(img_path))])
         return JsonResponse(order_data, safe=False)
 
 @api_view(['POST','PUT','DELETE'])
@@ -141,58 +151,81 @@ def transactions(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         transactions = Transaction.objects.filter(transaction_id__startswith=data['roll_number'])
+        orders = Order.objects.filter(order_id__startswith=data['roll_number'])
         data_list=[]
+        final_order = orders[0]
         for transaction in transactions:
             if transaction.earned:
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',transaction.event_name),('points',transaction.points_earned),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks),('order_id','')])
             else:
                 products = Product.objects.filter(product_id=transaction.product_id)
                 product = products[0]
-                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks)])
+                for order in orders:
+                    if order.status_change_time==transaction.date + ' ' + transaction.time:
+                        final_order = order
+                data = OrderedDict([('transaction_id',transaction.transaction_id),('earned',transaction.earned),('event_product_name',product.product_name),('points',product.points),('time',transaction.time),('date',transaction.date),('remarks',transaction.remarks),('order_id',final_order.order_id)])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
 
 def add_points(request):
     if request.method == 'GET':
-        return render(request,'points.html',{'not_uploaded':True})
-    csv_file = request.FILES["csv_file"]
-    file_data = csv_file.read().decode('utf-8')
-    lines = file_data.split("\n")
-    for i in range(1,len(lines)-1):
-        data = lines[i].strip().split(',')
-        student_obj = Student.objects.filter(roll_number=data[0])
-        if len(student_obj)==0:
-            student = Student(roll_number=data[0],name='',points_earned=int(data[1]),points_redeemed=0,total_points=int(data[1]))
-            student.save()
-            transaction = Transaction(transaction_id=data[0]+'0001',points_earned=int(data[1]),event_name=data[3]+', '+data[2],earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[4])
-            transaction.save()
+        return render(request,'login.html')
+    elif request.method == 'POST':
+        if 'password' in request.POST:
+            users = User.objects.filter(username=request.POST['user'])
+            if len(users)==0:
+                return render(request,'login.html')
+            user = users[0]
+            if not user.check_password(request.POST['password']):
+                return render(request,'login.html')
+            if not user.is_superuser:
+                return render(request,'login.html')
+            token,created = Token.objects.get_or_create(user=user)
+            return render(request,'points.html',{'not_uploaded':True,'token':token.key,'user':user.username})
         else:
-            student = student_obj[0]
-            student.points_earned+=int(data[1])
-            student.total_points+=int(data[1])
-            student.save()
-            transactions = Transaction.objects.filter(transaction_id__startswith=data[0])
-            transaction_id = data[0]
-            if transactions:
-                for i in range(4-len(str(len(transactions)+1))):
-                    transaction_id+='0'
-                transaction_id+=str(len(transactions)+1)
-            else:
-                transaction_id+='0001'
-            transaction = Transaction(transaction_id=transaction_id,event_name=data[3]+', '+data[2],points_earned=int(data[1]),earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[4])
-            transaction.save()
+            token,created = Token.objects.get_or_create(user=User.objects.get(username=request.POST['user']))
+            if token.key!=request.POST['token']:
+                return render(request,'login.html')
+            if not User.objects.get(username=request.POST['user']).is_superuser:
+                return render(request,'login.html')
+            csv_file = request.FILES["csv_file"]
+            file_data = csv_file.read().decode('utf-8')
+            lines = file_data.split("\n")
+            for i in range(1,len(lines)-1):
+                data = lines[i].strip().split(',')
+                student_obj = Student.objects.filter(roll_number=data[0])
+                if len(student_obj)==0:
+                    student = Student(roll_number=data[0],name='',points_earned=int(data[1]),points_redeemed=0,total_points=int(data[1]))
+                    student.save()
+                    transaction = Transaction(transaction_id=data[0]+'0001',points_earned=int(data[1]),event_name=data[3]+', '+data[2],earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[4])
+                    transaction.save()
+                else:
+                    student = student_obj[0]
+                    student.points_earned+=int(data[1])
+                    student.total_points+=int(data[1])
+                    student.save()
+                    transactions = Transaction.objects.filter(transaction_id__startswith=data[0])
+                    transaction_id = data[0]
+                    if transactions:
+                        for i in range(4-len(str(len(transactions)+1))):
+                            transaction_id+='0'
+                        transaction_id+=str(len(transactions)+1)
+                    else:
+                        transaction_id+='0001'
+                    transaction = Transaction(transaction_id=transaction_id,event_name=data[3]+', '+data[2],points_earned=int(data[1]),earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[4])
+                    transaction.save()
     return render(request,'points.html',{'not_uploaded':False})
 
-@api_view(['GET','POST'])
+@api_view(['GET','POST','PUT'])
 def order_admin(request):
     if request.method == 'GET':
-        orders = Order.objects.filter(Q(status='Ordered') | Q(status='Dispatched'))
+        orders = Order.objects.filter(Q(status='Redeemed') | Q(status='Ordered') | Q(status='Dispatched'))
         data_list=[]
         for order in orders:
             products = Product.objects.filter(product_id=order.product_id)
             product = products[0]
             img_path = request.build_absolute_uri(settings.MEDIA_URL) + str(product.product_picture)
-            data = OrderedDict([('order_id',order.order_id),('status',order.status),('product_id',product.product_id),('product_name',product.product_name),('points',product.points),('picture',str(img_path))])
+            data = OrderedDict([('order_id',order.order_id),('status',order.status),('change_time',order.status_change_time),('tentative',order.tentative_delivery),('product_id',product.product_id),('product_name',product.product_name),('product_desc',product.product_desc),('link',product.product_link),('points',product.points),('picture',str(img_path))])
             data_list.append(data)
         return JsonResponse(data_list, safe=False)
     
@@ -200,13 +233,40 @@ def order_admin(request):
         data = JSONParser().parse(request)
         orders = Order.objects.filter(order_id=data['order_id'])
         order = orders[0]
-        if order.status == 'Ordered':
+        if order.status == 'Redeemed':
+            order.status = 'Ordered'
+        elif order.status == 'Ordered':
             order.status = 'Dispatched'
         elif order.status == 'Dispatched':
             order.status = 'Delivered'
             order.deliver_time = datetime.now().strftime("%d %b,%Y %H:%M:%S") 
+        order.status_change_time = datetime.now().strftime("%d %b,%Y %H:%M:%S") 
         order.save()
         return JsonResponse({'message': 'Successfully Changed Order Status!'})
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        orders = Order.objects.filter(order_id=data['order_id'])
+        order = orders[0]
+        order.tentative_delivery = data['tentative']
+        order.save()
+        return JsonResponse({'success':True},safe=False)
+
+@csrf_exempt
+@api_view(["POST"])
+@permission_classes((AllowAny,))
+def token(request):
+    data = JSONParser().parse(request)
+    users = User.objects.filter(username=data['username'])
+    if len(users)==0:
+        return JsonResponse({"success":False},safe=False)
+    user = users[0]
+    if not user.check_password(data['password']):
+        return JsonResponse({"success":False},safe=False)
+    if not user.is_superuser:
+        return JsonResponse({"success":False},safe=False)
+    token,created = Token.objects.get_or_create(user=user)
+    return JsonResponse({"success":True,"token":token.key},safe=False)
+
 
 @csrf_exempt
 def posts(request):
@@ -233,5 +293,12 @@ def posts(request):
         student = student_list[0]
         if student.name == '':
             student.name = data['first_name']+' '+data['last_name']
-    user_data=OrderedDict([('name',data['first_name'] + ' ' + data['last_name']),('picture',data['profile_picture']),('roll_number',data['roll_number']),('email',data['email'])])
+            student.save()
+    users = User.objects.filter(username = data['roll_number'])
+    if len(users)==0:
+        user = User.objects.create_user(username=data['roll_number'], email=data['email'], password='techpoints')
+    else:
+        user = users[0]
+    token,created = Token.objects.get_or_create(user = user)
+    user_data=OrderedDict([('name',data['first_name'] + ' ' + data['last_name']),('picture',data['profile_picture']),('roll_number',data['roll_number']),('email',data['email']),('token',token.key)])
     return JsonResponse(user_data)

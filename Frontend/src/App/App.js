@@ -11,6 +11,7 @@ import Dashboard from '../Components/Dashboard/dashboard';
 import Prize from '../Components/Prizes/prizes';
 import History from '../Components/History/history';
 import Orders from '../Components/Orders/orders';
+import Adminlogin from '../Components/Admin_login/admin_login';
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           {/* <Route path="/dashboard" element={<Main />}></Route> */}
           <Route path="/" element={<Login />}/>
           <Route path="/order_admin" element={<Order_Admin />}/>
+          <Route path='/admin_login' element={<Adminlogin />} />
           <Route path="/dashboard" element={<Main />}>
             <Route path="" element={<Dashboard />}/>
             <Route path="products" element={<Prize />}/>
