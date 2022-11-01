@@ -18,6 +18,7 @@ urlpatterns = [
     path('products',views.products),
     path('transactions',views.transactions),
     path('add_points',views.add_points,name='add_points'),
+    # path('add_products',views.add_products,name='add_products'),
     path('order_admin',views.order_admin),
     path('token', views.token)
 ]

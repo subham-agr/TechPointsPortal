@@ -11,6 +11,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework import viewsets
 from django.conf import settings
 import pandas as pd
+import numpy as np
 import requests
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
@@ -215,6 +216,23 @@ def add_points(request):
                     transaction = Transaction(transaction_id=transaction_id,event_name=data[3]+', '+data[2],points_earned=int(data[1]),earned=True,time=datetime.now().strftime("%H:%M:%S"),date=datetime.now().strftime("%d %b,%Y"),remarks=data[4])
                     transaction.save()
     return render(request,'points.html',{'not_uploaded':False})
+
+def add_products(request):
+    if request.method == 'GET':
+        return render(request,'products.html')
+    elif request.method == 'POST':
+        csv_file = request.FILES["csv_file"]
+        data=pd.read_csv(csv_file)
+        data.fillna('#',inplace=True)
+        for i in range(len(data.index)):
+            id = 'TIKL_'
+            for j in range(3-len(str(i+1))):
+                id+='0'
+            id+=str(i+1)
+            img=id+'.jpg'
+            prod = Product(product_id=id,product_name=data['Prize'][i],points=int(data['Points'][i]),product_link=data['Link'][i],product_desc='',product_picture=img)
+            prod.save()
+    return render(request,'products.html')
 
 @api_view(['GET','POST','PUT'])
 def order_admin(request):

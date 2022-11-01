@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Points Upload</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <style>
+        body{
+            text-align: center;
+            height: 100vh;
+            background-color: #050820;
+            overflow: hidden;
+        }
+        .cont{
+            width: 80vw;
+            margin-top: 10vh !important;
+            margin: auto;
+            height: 80vh;
+            background-color: #e9f5ff;
+            border-radius: 50px;
+            padding: 10vh 5vw;
+            max-width: 950px;
+        }
+        button.btn{
+            font-size: 20px;
+            padding: 0.25em 1em;
+            margin: 2em;
+        }
+        .logo{
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cont">
+        <img src="{% static 'assets/techiitb.png' %}" alt="" class="logo">
+        <h1>Upload a CSV File</h1>
+        <form action="{% url 'add_products' %}" method="POST" enctype="multipart/form-data" class="form-horizontal"> 
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="name" class="control-label"></label>
+                <div class="">
+                    <input type="file" name="csv_file" id="csv_file" required="True" class="form-control">
+                </div>                    
+            </div>
+            <div class="form-group">                    
+                <div class="col-md-offset-3" style="margin-bottom:10px;">
+                     <button class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-upload" viewBox="0 0 20 20">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+                      </svg>Upload</button>
+                </div> 
+            </div>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+</body>
+</html>
