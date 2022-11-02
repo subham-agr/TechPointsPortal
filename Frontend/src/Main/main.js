@@ -48,6 +48,7 @@ import MenuItem from '@mui/material/MenuItem';
 
 const drawerWidth = 240;
 const settings = ['Logout'];
+// console.log("kkkkkkk")
 
 const openedMixin = (theme) => ({
   width: drawerWidth,
@@ -150,50 +151,19 @@ export default function Main() {
   };
 
   let query = useQuery();
-  if (localStorage.getItem("code") === null) {
-    localStorage.setItem("code", query.get("code"));
-  }
-  // console.log(data)
+  // if (localStorage.getItem("code") === null) {
+  //   localStorage.setItem("code", query.get("code"));
+  // }
+  // console.log("hhhhhhh")
   const [isLoading, setLoading] = useState(true);
   const [pokemon, setPokemon] = useState();
 
-  if (localStorage.getItem("data") === null) {
-    if (query.get("code") === null) {
-      window.location.replace("http://localhost:3000");
-    }
-    const data = {
-      code: query.get("code"),
-    };
-
-    axios.post("http://127.0.0.1:8000/userdata", data, {headers: {"Content-Type": "application/json"}})
-      .then((res) => {
-        localStorage.setItem("data", JSON.stringify(res));
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 500);
-        console.log(JSON.parse(localStorage.getItem("data")));
-        console.log("a");
-        // setPokemon(res.data);
-        // setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        // setLoading(false);
-      })
-      .finally(() => {
-        console.log("hiii");
-        if (localStorage.getItem("data") === null) {
-          alert("LOGIN PLEASE");
-          // window.location.replace('http://localhost:3000');
-        }
-      });
-  }
   // else{
   console.log(JSON.parse(localStorage.getItem("data")).data.roll_number);
+  const token = JSON.parse(localStorage.getItem('data')).data.token;
+  console.log(token);
   // }
   // }, []);
-
-  const token = JSON.parse(localStorage.getItem('data')).data.token;
 
   function handleclick(e) {
     if(window.confirm("Are you sure you want to Logout?")){

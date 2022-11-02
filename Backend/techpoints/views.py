@@ -1,6 +1,7 @@
 from asyncio.windows_events import NULL
 from email.message import Message
 from http.client import HTTPResponse
+import json
 from traceback import print_tb
 from typing import OrderedDict, final
 from datetime import datetime
@@ -288,16 +289,19 @@ def token(request):
 
 @csrf_exempt
 def posts(request):
+    print(request)
     headers = { "Authorization": "Basic "
                 + base64.b64encode(
-                    f"Qkpy3jC17jwlqOVBISsAub5fOEyRWr9yi48VcgeK:tcTFJGIB2zUeyp858njYs9jtr4MY8kPZuDTvKiqjK5VP6D0me08R0guexRBk81A648HnT9skxfFWdUSYFMrOwzhh8t5pcwkXglkEVFGlGc75WJovG3NsFe8mbsxrMvAi".encode("utf-8")
+                    f"61RfmTfc2NLr4qGIwCgMpY8IpIuyaw7HhywTdt8J:Aw49g61yEJ8hD0dJsixgrTghFN9dvzwImQf3qGCirAIkvjuFEtb1g5D3EUznMailw3ch45Sy7I341g5gk0iY3S2xn7OC5IpWbQeQ95DMLeAsB5qrESQEFbJ8yNZdhvCG".encode("utf-8")
                 ).decode("utf-8"),
                 "Content-Type": "application/x-www-form-urlencoded",
     }
     x=base64.b64encode(
-                    f"Qkpy3jC17jwlqOVBISsAub5fOEyRWr9yi48VcgeK:tcTFJGIB2zUeyp858njYs9jtr4MY8kPZuDTvKiqjK5VP6D0me08R0guexRBk81A648HnT9skxfFWdUSYFMrOwzhh8t5pcwkXglkEVFGlGc75WJovG3NsFe8mbsxrMvAi".encode("utf-8")
+                    f"61RfmTfc2NLr4qGIwCgMpY8IpIuyaw7HhywTdt8J:Aw49g61yEJ8hD0dJsixgrTghFN9dvzwImQf3qGCirAIkvjuFEtb1g5D3EUznMailw3ch45Sy7I341g5gk0iY3S2xn7OC5IpWbQeQ95DMLeAsB5qrESQEFbJ8yNZdhvCG".encode("utf-8")
                 ).decode("utf-8")
-    data = JSONParser().parse(request)
+    
+    data=json.loads(request.body)
+    print(data)
     r = requests.post('https://gymkhana.iitb.ac.in/profiles/oauth/token/', data='code='+data.get('code')+'&grant_type=authorization_code', headers=headers) 
     b = requests.get('https://gymkhana.iitb.ac.in/profiles/user/api/user/?fields=first_name,last_name,profile_picture,roll_number,email', headers={'Authorization':'Bearer '+r.json()['access_token']})
     data=b.json()

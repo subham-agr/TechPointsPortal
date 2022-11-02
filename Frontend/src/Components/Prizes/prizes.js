@@ -29,9 +29,12 @@ import {
 } from "@mui/material";
 // import Grid from '@mui/material/Unstable_Grid2';
 
+// console.log("lkkk")
+
 export default function Prize() {
   const [page, setpage] = React.useState();
   const [open, setopen] = useState(false);
+  console.log("priiiii")
   // var page1 = 12*page;
   // function importAll(r) {
   //   let images = {};
