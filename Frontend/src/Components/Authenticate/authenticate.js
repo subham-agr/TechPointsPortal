@@ -36,8 +36,12 @@ export default function Authenticate() {
           })
           .finally(() => {           
             // window.location.replace("http://localhost:3000/dashboard")
+            if(localStorage.getItem("data") != null){
+              window.location.replace("http://localhost:3000/dashboard")
+            }
           });
       }
+      
       else
       {
         window.location.replace("http://localhost:3000/dashboard")
