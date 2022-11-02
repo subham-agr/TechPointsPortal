@@ -37,11 +37,12 @@ export default function Dashboard() {
       axios
     .post('http://127.0.0.1:8000/students', data, {headers: {"Content-Type": "application/json", "Authorization": `Token ${token}`}})
     .then((res) => {
-    points = res.data[0];
+    // points = res.data[0];
     setpoint(res.data[0])
+    // console.log(points)
     });
     }, [])
-    console.log(points)
+    // console.log(points)
   return (
     <div className='content'>
       <div className="points">
