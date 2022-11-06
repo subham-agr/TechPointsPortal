@@ -254,6 +254,7 @@ def order_admin(request):
         order = orders[0]
         if order.status == 'Redeemed':
             order.status = 'Ordered'
+            order.tentative_delivery = data['tentative']
         elif order.status == 'Ordered':
             order.status = 'Dispatched'
         elif order.status == 'Dispatched':

@@ -15,6 +15,11 @@ import TextField from "@mui/material/TextField";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import InputBase from "@mui/material/InputBase";
+// import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+// import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,14 +42,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function Order_Admin() {
-  if(localStorage.getItem('techpointsadmin_token') === null) {
+  if (localStorage.getItem("techpointsadmin_token") === null) {
     window.location.replace("http://localhost:3000/admin_login");
   }
-  
+
   const [order_adminlist, setorder_admin] = React.useState([]);
   const [isordered, setordered] = useState(false);
   const [isdispatched, setdisptached] = useState(true);
   const [isdelivered, setdelivered] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const token = JSON.parse(localStorage.getItem("data")).data.token;
 
@@ -67,7 +73,31 @@ export default function Order_Admin() {
   function handleClick(event) {
     // console.log(event.target.id)
     const data = {
-      order_id: JSON.parse(event.target.id),
+      order_id: event.target.id,
+      tentative: value,
+    };
+    if (value === null) {
+      alert("Please fill the Tentative Delivery");
+    } else {
+      axios
+        .post("http://localhost:8000/order_admin", data, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Token ${admin_token}`,
+          },
+        })
+        .then((res) => {
+          // setorder_admin(res.data)
+          console.log(res);
+        });
+      window.location.reload(true);
+    }
+  }
+
+  function handleClick1(event) {
+    // console.log(event.target.id)
+    const data = {
+      order_id: event.target.id,
     };
     axios
       .post("http://localhost:8000/order_admin", data, {
@@ -80,33 +110,34 @@ export default function Order_Admin() {
         // setorder_admin(res.data)
         console.log(res);
       });
-
-      window.location.reload(true);
+    window.location.reload(true);
   }
 
-  function handleOrder(event){
+  function handleOrder(event) {
     setordered(true);
     setdisptached(false);
     handleClick(event);
     // window.location.reload(true);
   }
 
-  function handleDispatch(event){
+  function handleDispatch(event) {
     setdisptached(true);
     setdelivered(false);
-    handleClick(event)
+    handleClick(event);
     window.location.reload(true);
   }
 
-  function handleDeliver(event){
+  function handleDeliver(event) {
     setdelivered(true);
-    handleClick(event)
+    handleClick(event);
     window.location.reload(true);
   }
 
-  const [value, setValue] = React.useState(dayjs("2014-08-18"));
+  const [value, setValue] = React.useState(null);
+  // const [isdisable, setdisable] = React.useState(true)
   const handleChange = (newValue) => {
     setValue(newValue);
+    console.log(newValue);
   };
 
   function Logout() {
@@ -118,6 +149,37 @@ export default function Order_Admin() {
     <div className="margin">
       <div className="heading">
         <h1>ORDER STATUS PAGE ADMIN</h1>
+      </div>
+      <div className="searchbar">
+        <Paper
+          component="form"
+          sx={{
+            p: "2px 4px",
+            display: "flex",
+            alignItems: "center",
+            width: 400,
+          }}
+        >
+          <InputBase
+            sx={{ ml: 1, flex: 1 }}
+            placeholder="Search with Product Id"
+            inputProps={{ "aria-label": "search products" }}
+            onChange={(event) => {
+              setSearchTerm(event.target.value);
+            }}
+          />
+          <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+            <SearchIcon />
+          </IconButton>
+          {/* <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
+          <IconButton
+            color="primary"
+            sx={{ p: "10px" }}
+            aria-label="directions"
+          >
+            <DirectionsIcon />
+          </IconButton> */}
+        </Paper>
       </div>
       <div>
         <Button onClick={Logout}>Logout</Button>
@@ -131,25 +193,37 @@ export default function Order_Admin() {
               <StyledTableCell>Product Id</StyledTableCell>
               <StyledTableCell>Product Name</StyledTableCell>
               <StyledTableCell>Status</StyledTableCell>
+              <StyledTableCell>Delivery Date</StyledTableCell>
+              <StyledTableCell>Change Status</StyledTableCell>
               {/* <StyledTableCell>Ordered</StyledTableCell>
               <StyledTableCell>Dispatched</StyledTableCell>
               <StyledTableCell>Delivered</StyledTableCell>
-              <StyledTableCell>Delivery Date</StyledTableCell> */}
-              <StyledTableCell>Change Status</StyledTableCell>
-              {/* <StyledTableCell >Protein&nbsp;(g)</StyledTableCell> */}
+              <StyledTableCell >Protein&nbsp;(g)</StyledTableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
-            {order_adminlist.map((row) => (
-              <StyledTableRow key={row.order_id}>
-                <StyledTableCell component="th" scope="row">
-                  {row.order_id}
-                </StyledTableCell>
-                <StyledTableCell>{row.points}</StyledTableCell>
-                <StyledTableCell>{row.product_id}</StyledTableCell>
-                <StyledTableCell>{row.product_name}</StyledTableCell>
-                <StyledTableCell>{row.status}</StyledTableCell>
-                {/* <StyledTableCell>
+            {order_adminlist
+              .filter((val) => {
+                if (searchTerm === "") {
+                  return val;
+                } else if (
+                  val.product_id
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase())
+                ) {
+                  return val;
+                }
+              })
+              .map((row) => (
+                <StyledTableRow key={row.order_id}>
+                  <StyledTableCell component="th" scope="row">
+                    {row.order_id}
+                  </StyledTableCell>
+                  <StyledTableCell>{row.points}</StyledTableCell>
+                  <StyledTableCell>{row.product_id}</StyledTableCell>
+                  <StyledTableCell>{row.product_name}</StyledTableCell>
+                  <StyledTableCell>{row.status}</StyledTableCell>
+                  {/* <StyledTableCell>
                   <Button id={row.order_id} disabled={isordered} onClick={handleOrder}>
                     Ordered
                   </Button>
@@ -163,29 +237,50 @@ export default function Order_Admin() {
                   <Button id={row.order_id} disabled={isdelivered} onClick={handleDeliver}>
                     Delivered
                   </Button>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <LocalizationProvider dateAdapter={AdapterDayjs}>
-                    <DesktopDatePicker
-                      label="Date desktop"
-                      inputFormat="MM/DD/YYYY"
-                      value={value}
-                      onChange={handleChange}
-                      disabled={isdelivered}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
                 </StyledTableCell> */}
-                <StyledTableCell>
-                  <Button id={row.order_id} onClick={handleClick}>Change Status</Button>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
+                  {row.status === "Redeemed" ? (
+                    <StyledTableCell>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DesktopDatePicker
+                          label="Tentative Delivery"
+                          inputFormat="MM/DD/YYYY"
+                          value={value}
+                          onChange={handleChange}
+                          disabled={false}
+                          renderInput={(params) => <TextField {...params} />}
+                        />
+                      </LocalizationProvider>
+                    </StyledTableCell>
+                  ) : (
+                    <StyledTableCell>
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DesktopDatePicker
+                          label="Tentative Delivery"
+                          inputFormat="MM/DD/YYYY"
+                          value={value}
+                          onChange={handleChange}
+                          disabled
+                          renderInput={(params) => <TextField {...params} />}
+                        />
+                      </LocalizationProvider>
+                    </StyledTableCell>
+                  )}
+                  <StyledTableCell>
+                    {row.status === "Redeemed" ? (
+                      <Button id={row.order_id} onClick={handleClick}>
+                        Change Status
+                      </Button>
+                    ) : (
+                      <Button id={row.order_id} onClick={handleClick1}>
+                        Change Status
+                      </Button>
+                    )}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
     </div>
   );
 }
-
-
